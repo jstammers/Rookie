@@ -1,0 +1,497 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"sec",
+				"section*{title}	latex-document"
+			],
+			[
+				"in",
+				"includegraphics{name}	latex-document"
+			],
+			[
+				"upd",
+				"update_data"
+			],
+			[
+				"get",
+				"get_data_url"
+			],
+			[
+				"stra",
+				"start_list"
+			],
+			[
+				"star",
+				"start_list"
+			],
+			[
+				"date",
+				"datetime"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "chess.py",
+			"settings":
+			{
+				"buffer_size": 543,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/LaTeXing/LaTeX.sublime-build",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "envi",
+		"selected_items":
+		[
+			[
+				"envi",
+				"Snippet: Wrap Environment Around Selected Text"
+			],
+			[
+				"open pd",
+				"LaTeXing: Open PDF"
+			],
+			[
+				"pdf",
+				"LaTeXing: Jump To PDF"
+			],
+			[
+				"origami d",
+				"Origami: Destroy Current Pane"
+			],
+			[
+				"origami des",
+				"Origami: Destroy Current Pane"
+			],
+			[
+				"origami des right",
+				"Origami: Destroy Pane on the Right"
+			],
+			[
+				"orig",
+				"Origami: Destroy Pane Above"
+			],
+			[
+				"install pa",
+				"Package Control: Install Package"
+			],
+			[
+				"github",
+				"GitHub: Open Gist in Browser"
+			],
+			[
+				"Git push",
+				"Git: Push"
+			],
+			[
+				"quick ",
+				"Git: Quick Commit"
+			],
+			[
+				"figure",
+				"Snippet: Figure"
+			],
+			[
+				"tab",
+				"Snippet: Tabular"
+			],
+			[
+				"table",
+				"Snippet: Table"
+			],
+			[
+				"list ",
+				"Package Control: List Packages"
+			],
+			[
+				"quic",
+				"Git: Quick Commit"
+			],
+			[
+				"list pac",
+				"Package Control: List Packages"
+			],
+			[
+				"intall p",
+				"Package Control: Install Package"
+			],
+			[
+				"itali",
+				"Snippet: Italic Shape Text"
+			],
+			[
+				"snipp",
+				"Snippet: Itemize"
+			],
+			[
+				"git br",
+				"Git: Change Branch"
+			],
+			[
+				"git remote",
+				"Git: Track Remote Branch"
+			],
+			[
+				"git remote ",
+				"Git: Track Remote Branch"
+			],
+			[
+				"git",
+				"Git: Gui"
+			],
+			[
+				"git pu",
+				"Git: Pull"
+			],
+			[
+				"git bran",
+				"Git: Change Branch"
+			],
+			[
+				"set syntax: La",
+				"Set Syntax: LaTeXing"
+			],
+			[
+				"git config",
+				"Set Syntax: Git Config"
+			],
+			[
+				"git co",
+				"Git: Commit"
+			],
+			[
+				"git add",
+				"Git: Add All"
+			],
+			[
+				"git ",
+				"Git: Track Remote Branch"
+			],
+			[
+				"git pull",
+				"Git: Pull"
+			],
+			[
+				"git branc",
+				"Git: Change Branch"
+			],
+			[
+				"Github",
+				"Github: Repository"
+			],
+			[
+				"githbu",
+				"GitHub: Switch Accounts"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"list pa",
+				"Package Control: List Packages"
+			],
+			[
+				"git branch",
+				"Git: Change Branch"
+			],
+			[
+				"Snippet: ",
+				"Snippet: Page"
+			],
+			[
+				"ip",
+				"SublimeREPL: Python - IPython"
+			],
+			[
+				"or",
+				"Origami: Destroy Current Pane"
+			],
+			[
+				"Ip",
+				"SublimeREPL: Python - IPython"
+			],
+			[
+				"sublimerepl",
+				"SublimeREPL: Python - IPython"
+			],
+			[
+				"ori",
+				"Origami: Create Pane Above"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"enable p",
+				"Package Control: Enable Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"packa",
+				"Package Control: Disable Package"
+			],
+			[
+				"exe",
+				"SublimeREPL: Python - execnet"
+			],
+			[
+				"ipython",
+				"SublimeREPL: Python"
+			],
+			[
+				"enable",
+				"Open Current Notebook As Ipynb File"
+			],
+			[
+				"pac",
+				"Package Control: List Packages"
+			]
+		],
+		"width": 426.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/Jimmy_2/Dropbox/PhDWork/Reports/Jimmy_First_Annual/title.tex",
+		"/C/Users/Jimmy_2/Dropbox/PhDWork/Reports/Jimmy_First_Annual/main.pdf",
+		"/C/Users/Jimmy_2/Dropbox/PhDWork/Reports/Jimmy_First_Annual/introduction.tex",
+		"/C/Users/Jimmy_2/Dropbox/PhDWork/Reports/Jimmy_First_Annual/main.tex",
+		"/C/Users/Jimmy_2/Dropbox/PhDWork/Reports/Annual/title.tex",
+		"/C/Users/Jimmy_2/Dropbox/PhDWork/Reports/Annual/main.tex",
+		"/C/Users/Jimmy_2/Dropbox/PhDWork/Reports/Annual/equipment.tex",
+		"/usr/local/texlive/2013/texmf-dist/tex/latex/subfigure/subfigure.sty",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/js2109/Dropbox/PhDWork/Reports/9month/Progress.tex",
+		"/Users/js2109/Dropbox/PhDWork/Reports/Annual/Figures/ramanWave.png",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/Origami/Default (OSX).sublime-keymap",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/js2109/Dropbox/PhDWork/Reports/Annual/title.tex",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/User/LaTeXing.sublime-settings",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/LaTeX Word Count/LaTeXWordCount.sublime-settings",
+		"/Users/js2109/Dropbox/PhDWork/Reports/Annual/.gitignore",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/User/GitHub.sublime-settings",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/User/Github Tools.sublime-settings",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/User/AnnualReport.sublime-project",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/LaTeXing/LaTeXing.sublime-settings",
+		"/Users/js2109/Dropbox/Sublime/User/Snippets/Latex_report",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/User/SublimeREPL.sublime-settings",
+		"/Users/js2109/Dropbox/PhDWork/Reports/UKUS/main.tex",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/User/LaTeXTools.sublime-settings",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/SublimeREPL/SublimeREPL.sublime-settings",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/IPython Notebook/SublimeIPythonNotebook.sublime-settings",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/SublimePythonIDE/SublimePython.sublime-settings",
+		"/Users/js2109/Library/Application Support/Sublime Text 3/Packages/SublimeLinter/SublimeLinter.sublime-settings",
+		"/Users/js2109/.virtualenvs/ipython",
+		"/Users/js2109/Documents/Code/Navigator/LaserLog/Laser_Log.ipynb",
+		"/Users/js2109/Documents/Code/FTSEscraper.py",
+		"/Users/js2109/Documents/Code/Cicero-Word-Generator/AtticusServer/ServerRuntime/HSDIOTask.cs",
+		"/Users/js2109/Documents/Code/Cicero-Word-Generator/AtticusServer/ServerRuntime/AtticusServerCommunicator.cs",
+		"/Users/js2109/OneDriveBusiness/Code/UKUSlaser/AutoLock_Monitor.py"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"figure",
+			"fig",
+			"figure",
+			"line",
+			"got",
+			"Raman Optics",
+			"graphics",
+			"this_",
+			"rr",
+			"hsdio"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "chess.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 543,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": -0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 34.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 272.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "chess.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"untitled"
+			],
+			[
+				"t",
+				"untitled"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 466.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
