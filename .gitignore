@@ -1,1 +1,9 @@
 *.pyc
+*.ipynb_checkpoints
+build/*
+GPATH
+GRTAGS
+GTAGS
+*.epd
+*.vscode
+
