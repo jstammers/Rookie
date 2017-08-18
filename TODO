@@ -4,4 +4,6 @@
     [] Clean up structure of source code
     [] Use C99 and change to booleans and int_64
     [] Add unittests for profiling
+    [] Add pondering
     [] Implement python wrapper
+    [] Tune parameter weights based on game stage

@@ -4,7 +4,7 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-//#define DEBUG
+#define DEBUG
 #ifndef DEBUG
 //Defines an Assert function which catches errors when in debug mode
 #define ASSERT(n)
@@ -20,7 +20,8 @@ exit(1);}
 #endif
 
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" 
-/*Macros*/  
+/*Macros*/ 
+#define MAX_HASH 1024
 #define MAXGAMEMOVES 2048
 #define MAXPOSITIONMOVE 256
 #define FR2SQ(f,r) ( (21 + (f) ) + ((r) * 10))
@@ -187,6 +188,10 @@ typedef struct {
     float fhf;
 
 } S_SEARCHINFO;
+
+typedef struct {
+    int useBook;
+}S_OPTIONS;
 enum {FALSE, TRUE};
 
 //io.c
@@ -224,6 +229,7 @@ extern void StoreHashEntry(S_BOARD *pos, const int move, int score, const int fl
 extern int ProbeHashEntry(S_BOARD *pos, int *move, int *score, int alpha, int beta, int depth);
 extern int ProbePvMove(const S_BOARD *pos);
 extern int GetPvLine(const int depth, S_BOARD *pos);
+extern void ClearHashTable(S_HASHTABLE *table);
 //evaluate.c
 extern int EvalPosition(const S_BOARD *pos);
  //uci.c
@@ -236,4 +242,7 @@ extern void GenerateAllMoves(const S_BOARD *pos, S_MOVELIST *list);
 extern void GenerateAllCaps(const S_BOARD *pos, S_MOVELIST *list);
 extern int MoveExists(S_BOARD *pos, const int move); 
 extern void InitMvvLva();
+extern int GetBookMove(S_BOARD *board);
+extern void InitPolyBook();
+extern void CleanPolyBook();
 #endif // !DEFS_H

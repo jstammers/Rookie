@@ -6,4 +6,6 @@ GRTAGS
 GTAGS
 *.epd
 *.vscode
-
+PolyGlot/*
+Results/*
+.cmaketools.json

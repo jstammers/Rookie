@@ -68,7 +68,7 @@ void DebugAnalysisTest(S_BOARD *pos, S_SEARCHINFO *info) {
     file = fopen("lct2.epd","r");
     char lineIn [1024];
 
-	info->depth = MAXDEPTH;
+	info->depth = 6;
 	info->timeset = TRUE;
 	int time = 1140000;
 

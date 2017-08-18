@@ -2,6 +2,7 @@
 #include "defs.h"
 #include "board.h"
 #include "movegen.h"
+#include "globals.h"
 
 	
 int rootDepth;
@@ -284,41 +285,47 @@ void SearchPosition(S_BOARD *pos, S_SEARCHINFO *info) {
 	int pvNum = 0;
 	
 	ClearForSearch(pos,info);
+	if (EngineOptions-> useBook == TRUE){
 	
-	// iterative deepening
-	for( currentDepth = 1; currentDepth <= info->depth; ++currentDepth ) {
-							// alpha	 beta
-		rootDepth = currentDepth;
-		bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth, pos, info, TRUE);
-		
-		if(info->stopped == TRUE) {
-			break;
-		}
-		
-		pvMoves = GetPvLine(currentDepth, pos);
-		bestMove = pos->pvArray[0];
-		if(info->GAME_MODE == UCIMODE) {
-			printf("info score cp %d depth %d nodes %ld time %d ",
-				bestScore,currentDepth,info->nodes,GetTimeMs()-info->starttime);
-		} else if(info->GAME_MODE == XBOARDMODE && info->POST_THINKING == TRUE) {
-			printf("%d %d %d %ld ",
-				currentDepth,bestScore,(GetTimeMs()-info->starttime)/10,info->nodes);
-		} else if(info->POST_THINKING == TRUE) {
-			printf("score:%d depth:%d nodes:%ld time:%d(ms) ",
-				bestScore,currentDepth,info->nodes,GetTimeMs()-info->starttime);
-		}
-		if(info->GAME_MODE == UCIMODE || info->POST_THINKING == TRUE) {
-			pvMoves = GetPvLine(currentDepth, pos);	
-			printf("pv");		
-			for(pvNum = 0; pvNum < pvMoves; ++pvNum) {
-				printf(" %s",PrMove(pos->pvArray[pvNum]));
-			}
-			printf("\n");
-		}
-		
-		printf("Hits:%d Overwrite:%d NewWrite:%d Cut:%d\n",pos->HashTable->hit,pos->HashTable->overWrite,pos->HashTable->newWrite,pos->HashTable->cut);
+		bestMove = GetBookMove(pos);
 	}
-	
+
+	if( bestMove == NOMOVE){	
+		// iterative deepening
+		for( currentDepth = 1; currentDepth <= info->depth; ++currentDepth ) {
+							// alpha	 beta
+			rootDepth = currentDepth;
+			bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth, pos, info, TRUE);
+		
+			if(info->stopped == TRUE) {
+				break;
+			}
+		
+			pvMoves = GetPvLine(currentDepth, pos);
+			bestMove = pos->pvArray[0];
+			if(info->GAME_MODE == UCIMODE) {
+				printf("info score cp %d depth %d nodes %ld time %d ",
+					bestScore,currentDepth,info->nodes,GetTimeMs()-info->starttime);
+			} else if(info->GAME_MODE == XBOARDMODE && info->POST_THINKING == TRUE) {
+				printf("%d %d %d %ld ",
+					currentDepth,bestScore,(GetTimeMs()-info->starttime)/10,info->nodes);
+			} else if(info->POST_THINKING == TRUE) {
+				printf("score:%d depth:%d nodes:%ld time:%d(ms) ",
+					bestScore,currentDepth,info->nodes,GetTimeMs()-info->starttime);
+			}
+			if(info->GAME_MODE == UCIMODE || info->POST_THINKING == TRUE) {
+				pvMoves = GetPvLine(currentDepth, pos);	
+				printf("pv");		
+				for(pvNum = 0; pvNum < pvMoves; ++pvNum) {
+					printf(" %s",PrMove(pos->pvArray[pvNum]));
+				}
+				printf("\n");
+			}
+		
+			//printf("Hits:%d Overwrite:%d NewWrite:%d Cut:%d\n",pos->HashTable->hit,pos->HashTable->overWrite,pos->HashTable->newWrite,pos->HashTable->cut);
+		}
+	}
+
 	if(info->GAME_MODE == UCIMODE) {
 		printf("bestmove %s\n",PrMove(bestMove));
 	} else if(info->GAME_MODE == XBOARDMODE) {		

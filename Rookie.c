@@ -23,7 +23,7 @@
 #define PERFTFEN "n1n5/PPPk4/8/8/8/8/4Kppp/5N1N b - - 0 1" 
 #define WAC1 "r1b1k2r/ppppnppp/2n2q2/2b5/3NP3/2P1B3/PP3PPP/RN1QKB1R w KQkq - 0 1"
 
-int main(){ 
+int main(int argc, char *argv[]){ 
 
 	AllInit();	
 	
@@ -34,7 +34,13 @@ int main(){
     InitHashTable(pos->HashTable,64);
 	setbuf(stdin, NULL);
     setbuf(stdout, NULL);
-	
+
+	int argNum = 0;
+	for (argNum = 0; argNum < argc; ++argNum){
+		if (!(strncmp(argv[argNum],"NoBook",6))){
+			EngineOptions->useBook = FALSE;
+			}
+	}	
 	
 	printf("Welcome to Rookie! Type 'rookie' for console mode...\n");
 	
@@ -69,5 +75,6 @@ int main(){
 	}
 	
 	free(pos->HashTable->pTable);
+	CleanPolyBook();
 	return 0;
 }

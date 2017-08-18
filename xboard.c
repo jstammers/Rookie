@@ -231,7 +231,6 @@ void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 			engineSide = pos->side;  
 			continue; 
 		}		
-		  
 		if(!strcmp(command, "usermove")){
 			movestogo[pos->side]--;
 			move = ParseMove(inBuf+9, pos);	

@@ -111,6 +111,8 @@ void Uci_Loop(S_BOARD *pos, S_SEARCHINFO *info){
     int MB;
     printf("id name %s\n",NAME);
     printf("id author JStammers\n");
+    printf("option name Hash type spin default 64 min 4 max %d\n",MAX_HASH);
+    printf("option name Book type check default true\n");
     printf("uciok\n");
 
 
@@ -149,6 +151,17 @@ void Uci_Loop(S_BOARD *pos, S_SEARCHINFO *info){
 			printf("Set Hash to %d MB\n",MB);
 			InitHashTable(pos->HashTable, MB);
 		}
+         else if (!strncmp(line, "setoption name Book value ", 26)) {			
+            char *ptrTrue = NULL;
+            ptrTrue = strstr(line, "true");
+            if (ptrTrue != NULL){
+                EngineOptions->useBook = TRUE;
+            }else{
+                EngineOptions->useBook = FALSE;
+            }
+
+		}
+
 		if(info->quit) break;
     }
 }
