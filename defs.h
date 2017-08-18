@@ -4,7 +4,7 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-#define DEBUG
+//#define DEBUG
 #ifndef DEBUG
 //Defines an Assert function which catches errors when in debug mode
 #define ASSERT(n)

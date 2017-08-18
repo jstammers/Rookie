@@ -338,12 +338,13 @@ void GenerateAllCaps(const S_BOARD *pos, S_MOVELIST *list){
             if (!SQOFFBOARD(sq+11) && PieceCol[pos->pieces[sq+11]] == BLACK){
                 AddWhitePawnCapMove(pos,sq,sq+11,pos->pieces[sq+11],list);
             }
-
-            if (sq+9 == pos->enPas){
-                AddEnPassantMove(pos,MOVE(sq,sq+9,EMPTY,EMPTY,MFLAGEP),list);
-            }
-            if (sq+11 == pos->enPas){
-                AddEnPassantMove(pos,MOVE(sq,sq+11,EMPTY,EMPTY,MFLAGEP),list);
+            if (pos->enPas != NO_SQ){
+                if (sq+9 == pos->enPas && !SQOFFBOARD(sq+9)){
+                    AddEnPassantMove(pos,MOVE(sq,sq+9,EMPTY,EMPTY,MFLAGEP),list);
+                }
+                if (sq+11 == pos->enPas && !SQOFFBOARD(sq+11)){
+                    AddEnPassantMove(pos,MOVE(sq,sq+11,EMPTY,EMPTY,MFLAGEP),list);
+                }
             }
         }
     }
@@ -357,12 +358,13 @@ void GenerateAllCaps(const S_BOARD *pos, S_MOVELIST *list){
             if (!SQOFFBOARD(sq-11) && PieceCol[pos->pieces[sq-11]] == WHITE){
                 AddBlackPawnCapMove(pos,sq,sq-11,pos->pieces[sq-11],list);
             }
-
-            if (sq-9 == pos->enPas){
-                AddEnPassantMove(pos,MOVE(sq,sq-9,EMPTY,EMPTY,MFLAGEP),list);
-            }
-            if (sq-11 == pos->enPas){
-                AddEnPassantMove(pos,MOVE(sq,sq-11,EMPTY,EMPTY,MFLAGEP),list);
+            if (pos->enPas != NO_SQ){
+                if (sq-9 == pos->enPas && !SQOFFBOARD(sq-9)){
+                    AddEnPassantMove(pos,MOVE(sq,sq-9,EMPTY,EMPTY,MFLAGEP),list);
+                }
+                if (sq-11 == pos->enPas && !SQOFFBOARD(sq-11)){
+                 AddEnPassantMove(pos,MOVE(sq,sq-11,EMPTY,EMPTY,MFLAGEP),list);
+                }
             }
         }
     }

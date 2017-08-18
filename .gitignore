@@ -5,7 +5,6 @@ GPATH
 GRTAGS
 GTAGS
 *.epd
-*.vscode
+*.vscode/*
 PolyGlot/*
 Results/*
-.cmaketools.json
