@@ -64,8 +64,7 @@ void ParseGo(char* line, S_SEARCHINFO *info,S_BOARD *pos){
 		info->depth = MAXDEPTH;
 	}
 	
-	printf("time:%d start:%d stop:%d depth:%d timeset:%d\n",
-		time,info->starttime,info->stoptime,info->depth,info->timeset);
+	std::cout << "time:"<<time<<" start:" << info->starttime << "stop:" << info->stoptime <<" depth:" << info->depth <<" timeset:"<< info->timeset <<"\n";
 	SearchPosition(pos, info);   
 };
 
@@ -109,11 +108,11 @@ void Uci_Loop(S_BOARD *pos, S_SEARCHINFO *info){
 
     char line[INPUTBUFFER];
     int MB;
-    printf("id name %s\n",NAME);
-    printf("id author JStammers\n");
-    printf("option name Hash type spin default 64 min 4 max %d\n",MAX_HASH);
-    printf("option name Book type check default true\n");
-    printf("uciok\n");
+    std::cout << "id name "<<NAME<<"\n",NAME;
+    std::cout << "id author JStammers\n";
+    std::cout << "option name Hash type spin default 64 min 4 max "<<MAX_HASH<<"\n";
+    std::cout << "option name Book type check default true\n";
+    std::cout << "uciok\n";
 
 
     while (TRUE){
@@ -126,7 +125,7 @@ void Uci_Loop(S_BOARD *pos, S_SEARCHINFO *info){
         continue;
 
         if (!strncmp(line,"isready",7)){
-            printf("readyok\n");
+            std::cout << "readyok\n";
             continue;
         } else if (!strncmp(line,"position",8)){
             ParsePosition(line,pos);   
@@ -138,9 +137,9 @@ void Uci_Loop(S_BOARD *pos, S_SEARCHINFO *info){
             info->quit == TRUE;
             break;
         }else if (!strncmp(line,"uci",3)){
-            printf("id name %s\n",NAME);
-            printf("author JStammers\n");
-            printf("uciok\n");
+            std::cout << "id name "<<NAME<<"\n";
+            std::cout << "author JStammers\n";
+            std::cout << "uciok\n";
         } else if (!strncmp(line, "debug", 4)) {
             DebugAnalysisTest(pos,info);
             break;
@@ -148,7 +147,7 @@ void Uci_Loop(S_BOARD *pos, S_SEARCHINFO *info){
 			sscanf(line,"%*s %*s %*s %*s %d",&MB);
 			if(MB < 4) MB = 4;
 			if(MB > 2048) MB = 2048;
-			printf("Set Hash to %d MB\n",MB);
+			std::cout << "Set Hash to "<<MB<<" MB\n";
 			InitHashTable(pos->HashTable, MB);
 		}
          else if (!strncmp(line, "setoption name Book value ", 26)) {			

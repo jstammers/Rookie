@@ -304,22 +304,20 @@ void SearchPosition(S_BOARD *pos, S_SEARCHINFO *info) {
 			pvMoves = GetPvLine(currentDepth, pos);
 			bestMove = pos->pvArray[0];
 			if(info->GAME_MODE == UCIMODE) {
-				printf("info score cp %d depth %d nodes %ld time %d ",
-					bestScore,currentDepth,info->nodes,GetTimeMs()-info->starttime);
+				std::cout<<"info score cp " << bestScore << " depth " << currentDepth << " nodes " << info->nodes <<" time " << (GetTimeMs()-info->starttime)<< " ";
 			} else if(info->GAME_MODE == XBOARDMODE && info->POST_THINKING == TRUE) {
-				printf("%d %d %d %ld ",
-					currentDepth,bestScore,(GetTimeMs()-info->starttime)/10,info->nodes);
+				std::cout<< currentDepth << " " <<bestScore << " " << (GetTimeMs()-info->starttime)/10 << " " << info->nodes;
 			} else if(info->POST_THINKING == TRUE) {
-				printf("score:%d depth:%d nodes:%ld time:%d(ms) ",
-					bestScore,currentDepth,info->nodes,GetTimeMs()-info->starttime);
+				std::cout << "score:" << bestScore << " depth:" << currentDepth << "nodes: " << info->nodes <<" time:" << (GetTimeMs()-info->starttime)<<"(ms) ";
+
 			}
 			if(info->GAME_MODE == UCIMODE || info->POST_THINKING == TRUE) {
 				pvMoves = GetPvLine(currentDepth, pos);	
-				printf("pv");		
+				std::cout<<"pv";		
 				for(pvNum = 0; pvNum < pvMoves; ++pvNum) {
-					printf(" %s",PrMove(pos->pvArray[pvNum]));
+					std::cout<<" " << PrMove(pos->pvArray[pvNum]);
 				}
-				printf("\n");
+				std::cout<<"\n";
 			}
 		
 			//printf("Hits:%d Overwrite:%d NewWrite:%d Cut:%d\n",pos->HashTable->hit,pos->HashTable->overWrite,pos->HashTable->newWrite,pos->HashTable->cut);
@@ -327,12 +325,12 @@ void SearchPosition(S_BOARD *pos, S_SEARCHINFO *info) {
 	}
 
 	if(info->GAME_MODE == UCIMODE) {
-		printf("bestmove %s\n",PrMove(bestMove));
+		std::cout << "bestmove "<< PrMove(bestMove) << "\n";
 	} else if(info->GAME_MODE == XBOARDMODE) {		
-		printf("move %s\n",PrMove(bestMove));
+		std::cout << "move " << PrMove(bestMove) << "\n"; 
 		MakeMove(pos, bestMove);
 	} else {	
-		printf("\n\n***!! Vice makes move %s !!***\n\n",PrMove(bestMove));
+		std::cout << "\n\n***!! Vice makes move "<< PrMove(bestMove) << " !!***\n\n";
 		MakeMove(pos, bestMove);
 		PrintBoard(pos);
 	}

@@ -2,6 +2,8 @@
 
 #include "board.h"
 
+using namespace std;
+
 int CheckBoard(const S_BOARD *pos){
     int t_pceNum[13] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
     int t_bigPce[2] = {0,0};
@@ -109,7 +111,7 @@ void UpdateListsMaterial(S_BOARD *pos){
     }
 }
 
-int ParseFen(char *fen, S_BOARD *pos){
+int ParseFen(string fen, S_BOARD *pos){
     ASSERT(fen!= NULL);
     ASSERT(pos != NULL);
 
@@ -120,12 +122,12 @@ int ParseFen(char *fen, S_BOARD *pos){
     int i = 0;
     int sq64 = 0;
     int sq120 = 0;
-
+    string::iterator it = fen.begin();
     ResetBoard(pos);
 
-    while ((rank >= RANK_1) && *fen){
+    while ((rank >= RANK_1) && it < fen.end()){
         count = 1;
-        switch(*fen){
+        switch(*it){
             case 'p' : piece = bP; break;
             case 'r' : piece = bR; break;
             case 'n' : piece = bN; break;
@@ -148,17 +150,17 @@ int ParseFen(char *fen, S_BOARD *pos){
             case '7' :
             case '8' : 
                 piece = EMPTY;
-                count = *fen - '0';
+                count = *it - '0';
                 break;
             
             case '/':
             case ' ':
                 rank--;
                 file = FILE_A;
-                fen++;
+                it++;
                 continue;
             default:
-                printf("FEN_ERROR\n");
+                std::cout << "FEN_ERROR\n";
                 return -1;
        }
 
@@ -170,33 +172,33 @@ int ParseFen(char *fen, S_BOARD *pos){
            }
            file++;
        }
-       fen++;
+       it++;
     }
 
-    ASSERT(*fen == 'w' || *fen == 'b');
+    ASSERT(*it == 'w' || *it == 'b');
 
-    pos->side = (*fen == 'w') ? WHITE : BLACK;
-    fen+=2;
+    pos->side = (*it == 'w') ? WHITE : BLACK;
+    it+=2;
 
     for (i = 0; i<4; ++i){
-        if (*fen == ' '){
+        if (*it == ' '){
             break;
         }
-        switch (*fen){
+        switch (*it){
             case 'K': pos -> castlePerm |= WKCA; break;
             case 'Q': pos -> castlePerm |= WQCA; break;
             case 'k': pos -> castlePerm |= BKCA; break;
             case 'q': pos -> castlePerm |= BQCA; break;
             default: break;
         }
-        fen++;
+        it++;
 
     }
-    fen++;
+    it++;
 
     ASSERT(pos->castlePerm>=0 && pos->castlePerm<=15);
 
-    if (*fen != '-'){
+    if (*it != '-'){
         file = fen[0] - 'a';
         rank = fen[1] - '1';
 
@@ -259,30 +261,30 @@ void ResetBoard(S_BOARD *pos){
 void PrintBoard(const S_BOARD *pos){
     int sq,file,rank,piece;
 
-    printf("\nGameBoard:\n\n");
+    std::cout << "\nGameBoard:\n\n";
 
     for (rank = RANK_8; rank >= RANK_1; rank--){
-        printf("%d ",rank+1);
+        std::cout << rank+1 << " ";
         for (file = FILE_A; file <= FILE_H; file++){
             sq = FR2SQ(file,rank);
             piece = pos->pieces[sq];
-            printf("%3c",PceChar[piece]);
+            std::cout << PceChar[piece];
         }
-        printf("\n");
+        std::cout << "\n";
     }
-    printf("\n  ");
+    std::cout << "\n  ";
     for (file = FILE_A; file <= FILE_H; file++){
-        printf("%3c",'a'+file);
+        std::cout << 'a'+file;
     }
-    printf("\n");
-    printf("side:%c\n",SideChar[pos->side]);
-    printf("enPas:%d\n",pos->enPas);
-    printf("castle:%c%c%c%c\n",
-            pos->castlePerm & WKCA ? 'K' : '-',
-            pos->castlePerm & WQCA ? 'Q' : '-',
-            pos->castlePerm & BKCA ? 'k' : '-',
-            pos->castlePerm & BQCA ? 'q' : '-');
-    printf("PosKey:%llX\n",pos->posKey);
+    std::cout << "\n";
+    std::cout << "side:"<<SideChar[pos->side]<<"\n";
+    std::cout << "enPas:" << pos->enPas << "\n";
+    std::cout << "castle:" <<
+            (pos->castlePerm & WKCA) ? 'K' : '-',
+            (pos->castlePerm & WQCA) ? 'Q' : '-',
+            (pos->castlePerm & BKCA) ? 'k' : '-',
+            (pos->castlePerm & BQCA) ? 'q' : '-';
+    std::cout << "PosKey: "<< std::hex << pos->posKey<< "\n";
 
 }
 

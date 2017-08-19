@@ -33,7 +33,7 @@ void PerftTest(int depth, S_BOARD *pos) {
     ASSERT(CheckBoard(pos));
 
 	PrintBoard(pos);
-	printf("\nStarting Test To Depth:%d\n",depth);
+	std::cout<<"\nStarting Test To Depth:%d\n",depth;
     int start=GetTimeMs();	
 	leafNodes = 0;
 	
@@ -51,11 +51,11 @@ void PerftTest(int depth, S_BOARD *pos) {
         Perft(depth - 1, pos);
         TakeMove(pos);        
         long oldnodes = leafNodes - cumnodes;
-        printf("move %d : %s : %ld\n",MoveNum+1,PrMove(move),oldnodes);
+        std::cout<<"move "<<MoveNum+1<<" : "<< PrMove(move)<< " "<< oldnodes <<"\n";
     }
 	
     int end = GetTimeMs();
-	printf("\nTest Complete : %ld nodes visited\n in %d ms",leafNodes,end-start);
+	std::cout<<"\nTest Complete : %ld nodes visited\n in %d ms",leafNodes,end-start;
 
     return;
 }

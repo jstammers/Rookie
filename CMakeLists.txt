@@ -4,12 +4,12 @@ project(Rookie VERSION 1.0)
 include_directories(${CMAKE_SOURCE_DIR})
 link_directories(${CMAKE_SOURCE_DIR})
 
-set(PROGSRC bitboard.c init.c hashkeys.c data.c board.c attack.c io.c validate.c movegen.c makemove.c perft.c search.c misc.c pvtable.c evaluate.c uci.c xboard.c polybook.c polykeys.c)
+set(PROGSRC bitboard.cpp init.cpp hashkeys.cpp data.cpp board.cpp attack.cpp io.cpp validate.cpp movegen.cpp makemove.cpp perft.cpp search.cpp misc.cpp pvtable.cpp evaluate.cpp uci.cpp xboard.cpp polybook.cpp polykeys.cpp)
 
 include(CTest)
 enable_testing()
 
-add_executable(Rookie Rookie.c ${PROGSRC})
+add_executable(Rookie++ Rookie++.cpp ${PROGSRC})
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

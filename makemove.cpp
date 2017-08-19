@@ -59,9 +59,6 @@ static void ClearPiece(const int sq, S_BOARD *pos){
         }
     }
     ASSERT(t_pceNum != -1);
-    if (pce == OFFBOARD){
-        printf("Breaking\n");
-    }
     pos->pceNum[pce]--;
     pos->pList[pce][t_pceNum] = pos->pList[pce][pos->pceNum[pce]];
 
@@ -138,9 +135,6 @@ int MakeMove(S_BOARD *pos, int move){
 
     int from = FROMSQ(move);
     int to = TOSQ(move);
-    if (to == OFFBOARD){
-        printf("\nBreaking");
-    }
     int side = pos->side;
 
     ASSERT(SqOnBoard(from));

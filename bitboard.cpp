@@ -30,17 +30,17 @@ void PrintBitBoard(U64 bb){
     int sq = 0;
     int sq64 = 0;
 
-    printf("\n");
+    std::cout<<"\n";
     for (rank = RANK_8; rank >= RANK_1; --rank){
         for (file = FILE_A; file <= FILE_H; ++file){
             sq = FR2SQ(file,rank);
             sq64 = SQ64(sq);
             if ((shiftMe << sq64) & bb)
-                printf("X");
+                std::cout<<"X";
             else
-                printf("-");
+                std::cout<<"-";
         }
-        printf("\n");
+        std::cout<<"\n";
     }
-    printf("\n\n");
+    std::cout<<"\n\n";
 }

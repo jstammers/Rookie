@@ -42,7 +42,7 @@ int main(int argc, char *argv[]){
 			}
 	}	
 	
-	printf("Welcome to Rookie! Type 'rookie' for console mode...\n");
+	std::cout << "Welcome to Rookie! Type 'rookie' for console mode...\n";
 	
 	char line[256];
 	while (TRUE) {
@@ -65,10 +65,6 @@ int main(int argc, char *argv[]){
 			Console_Loop(pos, info);
 			if(info->quit == TRUE) break;
 			continue;	
-		} else if(!strncmp(line, "fen",3)){
-			char *perftLine = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
-			ParseFen(perftLine,pos);
-			PerftTest(4,pos);
 		} else if(!strncmp(line, "quit",4))	{
 			break;
 		}

@@ -6,6 +6,7 @@ bitboard.h : Defines methods for input and output of the bitboards.
 #include "defs.h"
 #include "board.h"
 #include "stdio.h"
+#include <iostream>
 
 #ifndef BITBOARD_H
 #define BITBOARD_H

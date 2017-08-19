@@ -32,7 +32,7 @@ void MirrorEvalTest(S_BOARD *pos) {
     int ev1 = 0; int ev2 = 0;
     int positions = 0;
     if(file == NULL) {
-        printf("File Not Found\n");
+        std::cout << "File Not Found\n";
         return;
     }  else {
         while(fgets (lineIn , 1024 , file) != NULL) {
@@ -43,18 +43,18 @@ void MirrorEvalTest(S_BOARD *pos) {
             ev2 = EvalPosition(pos);
 
             if(ev1 != ev2) {
-                printf("\n\n\n");
+                std::cout << "\n\n\n";
                 ParseFen(lineIn, pos);
                 PrintBoard(pos);
                 MirrorBoard(pos);
                 PrintBoard(pos);
-                printf("\n\nMirror Fail:\n%s\n",lineIn);
+                std::cout << "\n\nMirror Fail:\n"<< lineIn <<"\n";
                 getchar();
                 return;
             }
 
             if( (positions % 1000) == 0)   {
-                printf("position %d\n",positions);
+                std::cout << "position "<< positions<< "\n";
             }
 
             memset(&lineIn[0], 0, sizeof(lineIn));
@@ -74,7 +74,7 @@ void DebugAnalysisTest(S_BOARD *pos, S_SEARCHINFO *info) {
 
 
     if(file == NULL) {
-        printf("File Not Found\n");
+        std::cout << "File Not Found\n";
         return;
     }  else {
         while(fgets (lineIn , 1024 , file) != NULL) {
@@ -82,9 +82,9 @@ void DebugAnalysisTest(S_BOARD *pos, S_SEARCHINFO *info) {
 			info->stoptime = info->starttime + time;
 			ClearHashTable(pos->HashTable);
             ParseFen(lineIn, pos);
-            printf("\n%s\n",lineIn);
-			printf("time:%d start:%d stop:%d depth:%d timeset:%d\n",
-				time,info->starttime,info->stoptime,info->depth,info->timeset);
+            std::cout << "\n" <<lineIn<< "\n";
+			std::cout << "time:" <<time<<" start:" << info->starttime <<" stop:" << info->stoptime<<" depth:"<<info->depth << " timeset:" << info->timeset<< "\n",
+				time,info->starttime,info->stoptime,info->depth,info->timeset;
 			SearchPosition(pos, info);
             memset(&lineIn[0], 0, sizeof(lineIn));
         }
@@ -98,7 +98,7 @@ void PerftEvalTest(int depth, S_BOARD *pos){
     int score = 0;
     int positions = 0;
     if (file == NULL){
-        printf("File Not Found\n");
+        std::cout << "File Not Found\n";
         return;
     }
     else{

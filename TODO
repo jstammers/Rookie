@@ -2,7 +2,7 @@
     [] Change board representation to bitboards for all pieces
     [] Change move generation to use Magic Bitboards
     [] Clean up structure of source code
-    [] Use C99 and change to booleans and int_64
+    [] Port to c++
     [] Add unittests for profiling
     [] Add pondering
     [] Implement python wrapper

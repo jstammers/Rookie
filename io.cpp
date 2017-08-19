@@ -86,15 +86,15 @@ void PrintMoveList(const S_MOVELIST *list) {
 	int index = 0;
 	int score = 0;
 	int move = 0;
-	printf("MoveList:%d\n",list->count);
+	std::cout<<"MoveList:%d\n",list->count;
 	
 	for(index = 0; index < list->count; ++index) {
 	
 		move = list->moves[index].move;
 		score = list->moves[index].score;
 		
-		printf("Move:%d > %s (score:%d)\n",index+1,PrMove(move),score);
+		std::cout<<"Move:"<<index+1<<" > "<<PrMove(move)<<" (score:"<<score<<"\n";
 	}
-	printf("MoveList Total %d Moves:\n\n",list->count);
+	std::cout<<"MoveList Total %d Moves:\n\n",list->count;
 }
 

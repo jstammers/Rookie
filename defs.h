@@ -11,11 +11,11 @@
 #else
 #define ASSERT(n)\
 if (!(n)) {\
-printf("%s - Failed", #n); \
-printf("On %s ", __DATE__); \
-printf("At %s ", __TIME__); \
-printf("In File %s ", __FILE__); \
-printf("At Line %d ", __LINE__); \
+std::cout<<"%s - Failed", #n; \
+std::cout<<"On %s ", __DATE__; \
+std::cout<<"At %s ", __TIME__; \
+std::cout<<"In File %s ", __FILE__; \
+std::cout<<"At Line %d ", __LINE__; \
 exit(1);}
 #endif
 

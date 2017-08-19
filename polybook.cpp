@@ -22,18 +22,18 @@ void InitPolyBook(){
     //TODO change to argument or uci option
     FILE *pFile = fopen("performance.bin","rb"); 
     if (pFile == NULL){
-        printf("Book file not read\n");
+        std::cout << "Book file not read\n";
     }
     else{
         fseek(pFile,0,SEEK_END);
         long position = ftell(pFile);
         if (position < sizeof(S_POLY_BOOK_ENTRY)){
-            printf("No entries found\n");
+            std::cout << "No entries found\n";
             return;
         }
 
         NumEntries = position/sizeof(S_POLY_BOOK_ENTRY);
-        printf("%ld Entries found in file\n",NumEntries);
+        std::cout << "%ld Entries found in file\n",NumEntries;
         
         if (NumEntries != 0) {
             EngineOptions->useBook = TRUE;
