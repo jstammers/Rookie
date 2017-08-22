@@ -1,9 +1,30 @@
 #Long Term Improvements
-    [] Change board representation to bitboards for all pieces
-    [] Change move generation to use Magic Bitboards
-    [] Clean up structure of source code
-    [] Port to c++
-    [] Add unittests for profiling
-    [] Add pondering
-    [] Implement python wrapper
-    [] Tune parameter weights based on game stage
+    [ ] Change board representation to bitboards for all pieces
+    [ ] Change move generation to use Magic Bitboards
+    [ ] Clean up structure of source code
+    [ ] Port to c++
+    [ ] Add unittests for profiling
+    [ ] Add pondering
+    [ ] Implement python wrapper
+    [ ] Tune parameter weights based on game stage
+
+#C++ porting
+    [x] Change i/o
+    [ ] Change from cstyle string ops to c++
+    [ ] Change from True/False enums to bool
+    [ ] Piece class
+        [ ] values
+    [ ] Bitboard class
+        [ ] set bit/ clear bit
+    [ ] Board class
+        [ ] Print board
+        [ ] Set board
+        [ ] Get board
+    [ ] Square class
+        [ ] Represents each square on the board
+        [ ] File 
+        [ ] Rank
+    [ ] Hashtable
+    [ ] Move generation
+    [ ] Evaluation
+    [ ]

@@ -3,6 +3,7 @@
 
 #include "stdlib.h"
 #include "stdio.h"
+#include <string>
 
 //#define DEBUG
 #ifndef DEBUG
@@ -195,8 +196,8 @@ typedef struct {
 enum {FALSE, TRUE};
 
 //io.c
-extern char *PrSq(const int sq);
-extern char *PrMove(const int move);
+extern std::string PrSq(const int sq);
+extern std::string PrMove(const int move);
 //validate.c
 extern int SqOnBoard(const int sq);
 extern int SideValid(const int side);

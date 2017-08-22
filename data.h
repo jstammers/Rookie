@@ -6,6 +6,7 @@ data.h : Module for high-level rep of a chessboard
 
 #include "defs.h"
 #include "globals.h"
+#include <string>
 
 extern char PceChar[];
 extern char SideChar[];

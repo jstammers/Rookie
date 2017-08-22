@@ -1,10 +1,10 @@
 //perft.c
 
 #include "defs.h"
-#include "stdio.h"
 #include "board.h"
 #include "movegen.h"
-#include "string.h"
+#include <string>
+#include <iostream>
 
 long leafNodes;
 void Perft(int depth, S_BOARD *pos){

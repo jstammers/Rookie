@@ -1,48 +1,50 @@
 //uci.c
 #include "defs.h"
-#include "stdio.h"
-#include "string.h"
 #include "io.h"
+#include <string>
+#include <iostream>
+#include <sstream>
 
+using namespace std;
 
 #define INPUTBUFFER 400 * 6
 
-void ParseGo(char* line, S_SEARCHINFO *info,S_BOARD *pos){
+void ParseGo(string line, S_SEARCHINFO *info,S_BOARD *pos){
     int depth = -1, movestogo = 30,movetime = -1;
 	int time = -1, inc = 0;
-    char *ptr = NULL;
 	info->timeset = FALSE;
-	
-	if ((ptr = strstr(line,"infinite"))) {
+    
+    size_t found = line.find("infinite");
+	if (found != string::npos){
 		;
 	} 
-	
-	if ((ptr = strstr(line,"binc")) && pos->side == BLACK) {
-		inc = atoi(ptr + 5);
+	found = line.find("binc");
+	if ( found != string::npos && pos->side == BLACK) {
+		inc = stoi(line.substr(found+5));
 	}
-	
-	if ((ptr = strstr(line,"winc")) && pos->side == WHITE) {
-		inc = atoi(ptr + 5);
+	found = line.find("winc");
+	if (found != string::npos && pos->side == WHITE) {
+		inc = stoi(line.substr(found+5));
 	} 
-	
-	if ((ptr = strstr(line,"wtime")) && pos->side == WHITE) {
-		time = atoi(ptr + 6);
+    found = line.find("wtime");
+	if (found != string::npos && pos->side == WHITE) {
+		time = stoi(line.substr(found+6));
 	} 
-	  
-	if ((ptr = strstr(line,"btime")) && pos->side == BLACK) {
-		time = atoi(ptr + 6);
+	found = line.find("btime");
+	if (found != string::npos && pos->side == BLACK) {
+		time = stoi(line.substr(found+6));
 	} 
-	  
-	if ((ptr = strstr(line,"movestogo"))) {
-		movestogo = atoi(ptr + 10);
+	found = line.find("movestogo");
+	if (found != string::npos) {
+		movestogo = stoi(line.substr(found+10));
 	} 
-	  
-	if ((ptr = strstr(line,"movetime"))) {
-		movetime = atoi(ptr + 9);
+	found  = line.find("movetime");  
+	if (found != string::npos) {
+		movetime = stoi(line.substr(found+9));
 	}
-	  
-	if ((ptr = strstr(line,"depth"))) {
-		depth = atoi(ptr + 6);
+	found = line.find("depth");
+	if (found != string::npos) {
+		depth = stoi(line.substr(found+6));
 	} 
 	
 	if(movetime != -1) {
@@ -64,38 +66,38 @@ void ParseGo(char* line, S_SEARCHINFO *info,S_BOARD *pos){
 		info->depth = MAXDEPTH;
 	}
 	
-	std::cout << "time:"<<time<<" start:" << info->starttime << "stop:" << info->stoptime <<" depth:" << info->depth <<" timeset:"<< info->timeset <<"\n";
+	cout << "time:"<<time<<" start:" << info->starttime << "stop:" << info->stoptime <<" depth:" << info->depth <<" timeset:"<< info->timeset <<"\n";
 	SearchPosition(pos, info);   
 };
 
-void ParsePosition(char* lineIn, S_BOARD *pos){
+void ParsePosition(string lineIn, S_BOARD *pos){
 
     lineIn += 9;
-    char *ptrChar = lineIn;
-    if (strncmp(lineIn,"startpos",8) == 0){
+    //char *ptrChar = lineIn;
+    if (lineIn.find("startpos") != string::npos){
         ParseFen(START_FEN,pos);
     } else {
-        ptrChar = strstr(lineIn,"fen");
-        if (ptrChar == NULL){
+        size_t fenStart = lineIn.find("fen");
+        if (fenStart == string::npos){
             ParseFen(START_FEN,pos);
         } else {
-            ptrChar += 4;
-            ParseFen(ptrChar,pos);
+            string fenString = lineIn.substr(fenStart+3);
+            ParseFen(fenString,pos);
         }
     }
 
-    ptrChar = strstr(lineIn,"moves");
+    size_t movePos = lineIn.find("moves");
     int move;
 
-    if (ptrChar != NULL){
-        ptrChar += 6;
-        while (*ptrChar){
-            move = ParseMove(ptrChar,pos);
+    if (movePos != string::npos){
+        string input_moves = lineIn.substr(movePos+6);
+        stringstream ss(input_moves);
+        string move_string;
+        for (int i = 0; ss>>move_string; i++){
+            move = ParseMove(move_string,pos);
             if (move == NOMOVE) break;
             MakeMove(pos,move);
             pos->ply = 0;
-            while (*ptrChar && *ptrChar != ' ') ptrChar++;
-            ptrChar++; 
         }
     }
     PrintBoard(pos);
@@ -106,54 +108,47 @@ void Uci_Loop(S_BOARD *pos, S_SEARCHINFO *info){
     setbuf(stdin, NULL);
     setbuf(stdout, NULL);
 
-    char line[INPUTBUFFER];
+    string input_line;
     int MB;
-    std::cout << "id name "<<NAME<<"\n",NAME;
-    std::cout << "id author JStammers\n";
-    std::cout << "option name Hash type spin default 64 min 4 max "<<MAX_HASH<<"\n";
-    std::cout << "option name Book type check default true\n";
-    std::cout << "uciok\n";
+    cout << "id name "<<NAME<<"\n",NAME;
+    cout << "id author JStammers\n";
+    cout << "option name Hash type spin default 64 min 4 max "<<MAX_HASH<<"\n";
+    cout << "option name Book type check default true\n";
+    cout << "uciok\n";
 
 
     while (TRUE){
-        memset(&line[0],0,sizeof(line));
         fflush(stdout);
-        if (!fgets(line,INPUTBUFFER,stdin))
-        continue;
-
-        if(line[0]=='\n')
-        continue;
-
-        if (!strncmp(line,"isready",7)){
-            std::cout << "readyok\n";
+        getline(cin,input_line);
+        if (input_line.find("isready") != string::npos){
+            cout << "readyok\n";
             continue;
-        } else if (!strncmp(line,"position",8)){
-            ParsePosition(line,pos);   
-        }else if (!strncmp(line,"ucinewgame",10)){
+        } else if (input_line.find("position") != string::npos){
+            ParsePosition(input_line,pos);   
+        }else if (input_line.find("ucinewgame") != string::npos){
             ParsePosition("position startpos\n",pos);   
-        }else if (!strncmp(line,"go",2)){
-         ParseGo(line,info,pos);   
-        }else if (!strncmp(line,"quit",4)){
+        }else if (input_line.find("go") != string::npos){
+         ParseGo(input_line,info,pos);   
+        }else if (input_line.find("quit") != string::npos){
             info->quit == TRUE;
             break;
-        }else if (!strncmp(line,"uci",3)){
-            std::cout << "id name "<<NAME<<"\n";
-            std::cout << "author JStammers\n";
-            std::cout << "uciok\n";
-        } else if (!strncmp(line, "debug", 4)) {
+        }else if (input_line.find("uci") != string::npos){
+            cout << "id name " << NAME << "\n";
+            cout << "author JStammers\n";
+            cout << "uciok\n";
+        } else if (input_line.find("debug") != string::npos) {
             DebugAnalysisTest(pos,info);
             break;
-        } else if (!strncmp(line, "setoption name Hash value ", 26)) {			
-			sscanf(line,"%*s %*s %*s %*s %d",&MB);
+        } else if (input_line.find("setoption name Hash value ") != string::npos) {			
+            size_t last_index = input_line.find_first_of("0123456789");
+            MB = stoi(input_line.substr(last_index+1));
 			if(MB < 4) MB = 4;
 			if(MB > 2048) MB = 2048;
-			std::cout << "Set Hash to "<<MB<<" MB\n";
+			cout << "Set Hash to " << MB << " MB\n";
 			InitHashTable(pos->HashTable, MB);
 		}
-         else if (!strncmp(line, "setoption name Book value ", 26)) {			
-            char *ptrTrue = NULL;
-            ptrTrue = strstr(line, "true");
-            if (ptrTrue != NULL){
+         else if (input_line.find("setoption name Book value ") != string::npos) {			
+            if (input_line.find("true") != string::npos){
                 EngineOptions->useBook = TRUE;
             }else{
                 EngineOptions->useBook = FALSE;
@@ -162,5 +157,5 @@ void Uci_Loop(S_BOARD *pos, S_SEARCHINFO *info){
 		}
 
 		if(info->quit) break;
-    }
+}
 }

@@ -3,6 +3,8 @@
 #include "globals.h"
 #include "io.h"
 
+using namespace std;
+
 typedef struct {
     U64 key;
     unsigned short move;
@@ -22,18 +24,18 @@ void InitPolyBook(){
     //TODO change to argument or uci option
     FILE *pFile = fopen("performance.bin","rb"); 
     if (pFile == NULL){
-        std::cout << "Book file not read\n";
+        cout << "Book file not read\n";
     }
     else{
         fseek(pFile,0,SEEK_END);
         long position = ftell(pFile);
         if (position < sizeof(S_POLY_BOOK_ENTRY)){
-            std::cout << "No entries found\n";
+            cout << "No entries found\n";
             return;
         }
 
         NumEntries = position/sizeof(S_POLY_BOOK_ENTRY);
-        std::cout << "%ld Entries found in file\n",NumEntries;
+        cout << "%ld Entries found in file\n",NumEntries;
         
         if (NumEntries != 0) {
             EngineOptions->useBook = TRUE;
@@ -148,30 +150,17 @@ int ConvertPolyMoveToInternalMove(unsigned short polyMove, S_BOARD *board){
 	int tf = (polyMove >> 0) & 7;
 	int tr = (polyMove >> 3) & 7;
 	int pp = (polyMove >> 12) & 7;
-	
-	char moveString[6];
-	if(pp == 0) {
-		sprintf(moveString, "%c%c%c%c",
-		FileChar[ff],
-		RankChar[fr],
-		FileChar[tf],
-		RankChar[tr]);
-	} else {
+    string moveString = {FileChar[ff], RankChar[fr], FileChar[tf], RankChar[tr]};
+    if (pp!=0){
 		char promChar = 'q';
 		switch(pp) {
 			case 1: promChar = 'n'; break;
 			case 2: promChar = 'b'; break;
-			case 3: promChar = 'r'; break;
-		}
-		sprintf(moveString, "%c%c%c%c%c",
-		FileChar[ff],
-		RankChar[fr],
-		FileChar[tf],
-		RankChar[tr],
-		promChar);
-	}
-	
-	return ParseMove(moveString, board);
+            case 3: promChar = 'r'; break;
+        }
+        moveString += promChar;
+    }
+    return ParseMove(moveString,board);
 }
 
 int GetBookMove(S_BOARD *board){

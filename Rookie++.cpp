@@ -1,4 +1,4 @@
-#include "stdio.h" 
+
 #include "defs.h"
 #include "board.h"
 #include "init.h"
@@ -8,7 +8,8 @@
 #include "attack.h"
 #include "movegen.h"
 #include "io.h"
-#include "string.h"
+#include <string>
+#include <iostream>
 
 #define PAWNMOVESW "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w KQkq e6 0 1"
 #define PAWNMOVESB "rnbqkbnr/p1p1p3/3p3p/1p1p4/2P1Pp2/8/PP1P1PpP/RNBQKB1R b KQkq e3 0 1"
@@ -22,6 +23,8 @@
 
 #define PERFTFEN "n1n5/PPPk4/8/8/8/8/4Kppp/5N1N b - - 0 1" 
 #define WAC1 "r1b1k2r/ppppnppp/2n2q2/2b5/3NP3/2P1B3/PP3PPP/RN1QKB1R w KQkq - 0 1"
+
+using namespace std;
 
 int main(int argc, char *argv[]){ 
 
@@ -37,35 +40,33 @@ int main(int argc, char *argv[]){
 
 	int argNum = 0;
 	for (argNum = 0; argNum < argc; ++argNum){
-		if (!(strncmp(argv[argNum],"NoBook",6))){
+		if (argv[argNum]=="NoBook"){
 			EngineOptions->useBook = FALSE;
 			}
 	}	
 	
 	std::cout << "Welcome to Rookie! Type 'rookie' for console mode...\n";
 	
-	char line[256];
+	string line;
 	while (TRUE) {
-		memset(&line[0], 0, sizeof(line));
+		
+		getline(cin,line);
 
-		fflush(stdout);
-		if (!fgets(line, 256, stdin))
-			continue;
 		if (line[0] == '\n')
 			continue;
-		if (!strncmp(line, "uci",3)) {			
+		if (line=="uci") {			
 			Uci_Loop(pos, info);
 			if(info->quit == TRUE) break;
 			continue;
-		} else if (!strncmp(line, "xboard",6))	{
+		} else if (line=="xboard")	{
 			XBoard_Loop(pos, info);
 			if(info->quit == TRUE) break;
 			continue;
-		} else if (!strncmp(line, "rookie",4))	{
+		} else if (line=="rookie")	{
 			Console_Loop(pos, info);
 			if(info->quit == TRUE) break;
 			continue;	
-		} else if(!strncmp(line, "quit",4))	{
+		} else if(line=="quit")	{
 			break;
 		}
 	}

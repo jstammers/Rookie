@@ -3,6 +3,9 @@
 #include "defs.h"
 #include "board.h"
 #include "string.h"
+#include "stdio.h"
+#include <string>
+#include <iostream>
 #include "io.h"
 
 int SqOnBoard(const int sq){

@@ -1,56 +1,50 @@
 //io.c
 #include "io.h"
+using namespace std;
 
-char *PrSq(const int sq){
-    static char SqStr[3];
+string PrSq(const int sq){
 
     int file = FilesBrd[sq];
     int rank = RanksBrd[sq];
-
-    sprintf(SqStr, "%c%c", ('a'+file),('1'+rank));
-    return SqStr;
-
+    string sqStr = to_string('a'+file) + to_string('1'+ rank);
+    return sqStr;
 }
 
-char *PrMove(const int move){
-    static char MvSqr[6];
-
-    int ff = FilesBrd[FROMSQ(move)];
-    int rf = RanksBrd[FROMSQ(move)];
-    int ft = FilesBrd[TOSQ(move)];
-    int rt = RanksBrd[TOSQ(move)];
+string PrMove(const int move){
+    char ff = 'a' + (char)FilesBrd[FROMSQ(move)];
+    char rf = '1' + (char)RanksBrd[FROMSQ(move)];
+    char ft = 'a' + (char)FilesBrd[TOSQ(move)];
+    char rt = '1' + (char)RanksBrd[TOSQ(move)];
 
     int promoted = PROMOTED(move);
 
+    string mvStr = {ff,rf,ft,rt};
     if(promoted){
-        char pchar = 'q';
+        string pchar = "q";
         if (IsKn(promoted)){
-            pchar = 'n';
+            pchar = "n";
         }
         else if (IsRQ(promoted) && !IsBQ(promoted))
         {
-            pchar = 'r';   
+            pchar = "r";   
         }
         else if (!IsRQ(promoted) && IsBQ(promoted))
         {
-            pchar ='b';   
+            pchar = "b";   
         }
-        sprintf(MvSqr, "%c%c%c%c%c",('a'+ff),('1'+rf),('a'+ft),('1'+rt),pchar);
+        mvStr.append(pchar);
     }
-    else{
-        sprintf(MvSqr, "%c%c%c%c",('a'+ff),('1'+rf),('a'+ft),('1'+rt));
-    }
-    return MvSqr;
+    return mvStr;
 
 } 
-int ParseMove(char *ptrChar, S_BOARD *pos){
-    if (ptrChar[1]>'8' || ptrChar[1] < '1') return NOMOVE;
-    if (ptrChar[3]>'8' || ptrChar[3] < '1') return NOMOVE;
-    if (ptrChar[0]>'h' || ptrChar[0] < 'a') return NOMOVE;
-    if (ptrChar[2] >'h' || ptrChar[2] < 'a') return NOMOVE;
+int ParseMove(string move, S_BOARD *pos){
+    if (move[1]>'8' || move[1] < '1') return NOMOVE;
+    if (move[3]>'8' || move[3] < '1') return NOMOVE;
+    if (move[0]>'h' || move[0] < 'a') return NOMOVE;
+    if (move[2] >'h' || move[2] < 'a') return NOMOVE;
 
-    int from  = FR2SQ(ptrChar[0]-'a',ptrChar[1]-'1');
-    int to = FR2SQ(ptrChar[2]-'a',ptrChar[3]-'1');
+    int from  = FR2SQ(move[0]-'a',move[1]-'1');
+    int to = FR2SQ(move[2]-'a',move[3]-'1');
 
     ASSERT(SqOnBoard(from));
     ASSERT(SqOnBoard(to));
@@ -66,13 +60,13 @@ int ParseMove(char *ptrChar, S_BOARD *pos){
         if(FROMSQ(Move) == from && TOSQ(Move) == to){
             PromPce = PROMOTED(Move);
             if (PromPce != EMPTY){
-                if (IsRQ(PromPce) && IsBQ(PromPce) && ptrChar[4] == 'q'){
+                if (IsRQ(PromPce) && IsBQ(PromPce) && move[4] == 'q'){
                     return Move;
                 }
-                else if (IsRQ(PromPce) && !IsBQ(PromPce) && ptrChar[4]=='r'){
+                else if (IsRQ(PromPce) && !IsBQ(PromPce) && move[4]=='r'){
                     return Move;
                 }
-                else if (IsKn(PromPce) && ptrChar[4] == 'n'){
+                else if (IsKn(PromPce) && move[4] == 'n'){
                     return Move;
                 }
                 continue;

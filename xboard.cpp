@@ -1,12 +1,15 @@
 
 // xboard.c
 
-#include "stdio.h"
 #include "defs.h"
-#include "string.h"
 #include "movegen.h"
 #include "board.h"
 #include "io.h"
+#include <string>
+#include <iostream>
+#include <sstream>
+
+using namespace std;
 
 int ThreeFoldRep(const S_BOARD *pos) {
 	int i = 0, r = 0;
@@ -33,15 +36,15 @@ int DrawMaterial(const S_BOARD *pos) {
 int checkresult(S_BOARD *pos) {
 
     if (pos->fiftyMove > 100) {
-     printf("1/2-1/2 {fifty move rule (claimed by Rookie)}\n"); return TRUE;
+     cout << "1/2-1/2 {fifty move rule (claimed by Rookie)}\n"; return TRUE;
     }
 
     if (ThreeFoldRep(pos) >= 2) {
-     printf("1/2-1/2 {3-fold repetition (claimed by Rookie)}\n"); return TRUE;
+     cout << "1/2-1/2 {3-fold repetition (claimed by Rookie)}\n"; return TRUE;
     }
 	
 	if (DrawMaterial(pos) == TRUE) {
-     printf("1/2-1/2 {insufficient material (claimed by Rookie)}\n"); return TRUE;
+     cout << "1/2-1/2 {insufficient material (claimed by Rookie)}\n"; return TRUE;
     }
 	
 	S_MOVELIST list[1];
@@ -65,19 +68,19 @@ int checkresult(S_BOARD *pos) {
 	
 	if(InCheck == TRUE)	{
 	    if(pos->side == WHITE) {
-	      printf("0-1 {black mates (claimed by Rookie)}\n");return TRUE;
+		  cout << "0-1 {black mates (claimed by Rookie)}\n";return TRUE;
         } else {
-	      printf("0-1 {white mates (claimed by Rookie)}\n");return TRUE;
+	      cout << "0-1 {white mates (claimed by Rookie)}\n";return TRUE;
         }
     } else {
-      printf("\n1/2-1/2 {stalemate (claimed by Rookie)}\n");return TRUE;
+      cout << "\n1/2-1/2 {stalemate (claimed by Rookie)}\n"; return TRUE;
     }	
 	return FALSE;	
 }
 
 void PrintOptions() {
-	printf("feature ping=1 setboard=1 colors=0 usermove=1\n");      
-	printf("feature done=1\n");
+	cout << "feature ping=1 setboard=1 colors=0 usermove=1\n";      
+	cout << "feature done=1\n";
 }
 
 void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
@@ -85,7 +88,8 @@ void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 	info->GAME_MODE = XBOARDMODE;
 	info->POST_THINKING = TRUE;
 	setbuf(stdin, NULL);
-    setbuf(stdout, NULL);
+	setbuf(stdout, NULL);
+
 	PrintOptions(); // HACK
 	
 	int depth = -1, movestogo[2] = {30,30 }, movetime = -1;
@@ -97,8 +101,9 @@ void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 	int mps;
 	int move = NOMOVE;	
 	int i, score;
-	char inBuf[80], command[80];	
 	
+	string command;
+	string firstCommand;
 	engineSide = BLACK; 
 	ParseFen(START_FEN, pos);
 	depth = -1; 
@@ -123,8 +128,7 @@ void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 				info->depth = MAXDEPTH;
 			}
 		
-			printf("time:%d start:%d stop:%d depth:%d timeset:%d movestogo:%d mps:%d\n",
-				time,info->starttime,info->stoptime,info->depth,info->timeset, movestogo[pos->side], mps);
+			cout << "time:" << time << " start:" << info->starttime<< " stop:" <<info->stoptime<<" depth:"<<info->depth<<" timeset:"<<info->timeset<<" movestogo:" <<movestogo[pos->side]<<" mps:"<< mps<<"\n";
 				SearchPosition(pos, info);
 			
 			if(mps != 0) {
@@ -138,65 +142,64 @@ void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 
 		fflush(stdout); 
 	
-		memset(&inBuf[0], 0, sizeof(inBuf));
-		fflush(stdout);
-		if (!fgets(inBuf, 80, stdin))
-		continue;
-    
-		sscanf(inBuf, "%s", command);
+		getline(cin,command);
 		
-		printf("command seen:%s\n",inBuf);
-    
-		if(!strcmp(command, "quit")) { 
+		cout << "command seen:"<<command <<"\n";
+		stringstream command_stream(command);
+
+		if(command == "quit") { 
 			info->quit = TRUE;
 			break; 
 		}
 		
-		if(!strcmp(command, "force")) { 
+		if(command == "force") { 
 			engineSide = BOTH; 
 			continue; 
 		} 
 		
-		if(!strcmp(command, "protover")){
+		if(command == "protover"){
 			PrintOptions();
 		    continue;
 		}
 		
-		if(!strcmp(command, "sd")) {
-			sscanf(inBuf, "sd %d", &depth); 
-		    printf("DEBUG depth:%d\n",depth);
+		if(command.find("sd") != string::npos) {
+			command_stream >> firstCommand >> depth;
+			cout << "DEBUG depth:" << depth <<"\n";
 			continue; 
 		}
 		
-		if(!strcmp(command, "st")) {
-			sscanf(inBuf, "st %d", &movetime); 
-		    printf("DEBUG movetime:%d\n",movetime);
+		if(command.find("st") != string::npos) {
+			command_stream >> firstCommand >> movetime;
+		    cout << "DEBUG movetime:" << movetime << "\n";
 			continue; 
 		}  
 		
-		if(!strcmp(command, "time")) {
-			sscanf(inBuf, "time %d", &time); 
+		if(command.find("time") != string::npos){
+		//	sscanf(inBuf, "time %d", &time); 
+			command_stream >> firstCommand >> time;
 			time *= 10;
-		    printf("DEBUG time:%d\n",time);
+		    cout << "DEBUG time:" << time << "\n";
 			continue; 
 		}  
-		if(!strcmp(command, "memory")) {			
-			sscanf(inBuf, "memory %d", &MB);		
+		if(command.find("memory") != string::npos){			
+			command_stream >> firstCommand >> MB;		
 		    if(MB < 4) MB = 4;
 			if(MB > 2048) MB = 2048;
-			printf("Set Hash to %d MB\n",MB);
+			cout << "Set Hash to "<<MB<< " MB\n";
 			InitHashTable(pos->HashTable, MB);
 			continue;
 		}
-		if(!strcmp(command, "level")) {
+		if(command.find("level") != string::npos) {
 			sec = 0;
 			movetime = -1;
-			if( sscanf(inBuf, "level %d %d %d", &mps, &timeLeft, &inc) != 3) {
-			  sscanf(inBuf, "level %d %d:%d %d", &mps, &timeLeft, &sec, &inc);
-		      printf("DEBUG level with :\n");
-			}	else {
-		      printf("DEBUG level without :\n");
-			}			
+			if (command.find(":") != string::npos){
+				command_stream >> firstCommand >> mps >> timeLeft >> sec >> inc;
+				cout << "DEBUG level with :\n";
+			}
+			else {
+				command_stream >> firstCommand >> mps >> timeLeft >> inc;
+				cout << "DEBUG level without :\n";
+			}
 			timeLeft *= 60000;
 			timeLeft += sec * 1000;
 			movestogo[0] = movestogo[1] = 30;
@@ -204,16 +207,17 @@ void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 				movestogo[0] = movestogo[1] = mps;
 			}
 			time = -1;
-		    printf("DEBUG level timeLeft:%d movesToGo:%d inc:%d mps%d\n",timeLeft,movestogo[0],inc,mps);
+		    cout << "DEBUG level timeLeft:" << timeLeft <<" movesToGo:"<< movestogo[0] <<" inc:" << inc <<" mps:" << mps << "\n";
 			continue; 
 		}  		
 		
-		if(!strcmp(command, "ping")) { 
-			printf("pong%s\n", inBuf+4); 
+		if(command.find("ping") != string::npos) {
+			command = command.replace(command.begin(),command.begin()+4,"pong"); 
+			cout << command << "\n"; 
 			continue; 
 		}
 		
-		if(!strcmp(command, "new")) { 
+		if(command.find("new") != string::npos) { 
 			engineSide = BLACK; 
 			ParseFen(START_FEN, pos);
 			depth = -1; 
@@ -221,31 +225,32 @@ void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 			continue; 
 		}
 		
-		if(!strcmp(command, "setboard")){
+		if(command.find("setboard") != string::npos){
 			engineSide = BOTH;  
-			ParseFen(inBuf+9, pos); 
+			ParseFen(command.substr(9), pos); 
 			continue; 
 		}   		
 		
-		if(!strcmp(command, "go")) { 
+		if(command.find("go") != string::npos) { 
 			engineSide = pos->side;  
 			continue; 
 		}		
-		if(!strcmp(command, "usermove")){
+		if(command.find("usermove") != string::npos){
 			movestogo[pos->side]--;
-			move = ParseMove(inBuf+9, pos);	
+			move = ParseMove(command.substr(9), pos);	
 			if(move == NOMOVE) continue;
 			MakeMove(pos, move);
             pos->ply=0;
 		}    
+			command_stream.clear();
     }	
 }
 
 
 void Console_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 
-	printf("Welcome to Rookie In Console Mode!\n");
-	printf("Type help for commands\n\n");
+	cout << "Welcome to Rookie In Console Mode!\n";
+	cout << "Type help for commands\n\n";
 
 	info->GAME_MODE = CONSOLEMODE;
 	info->POST_THINKING = TRUE;
@@ -255,13 +260,14 @@ void Console_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 	int depth = MAXDEPTH, movetime = 3000;            
 	int engineSide = BOTH;    
 	int move = NOMOVE;		
-	char inBuf[80], command[80];	
-	
+	string command;
+	string firstCommand;
+
+
 	engineSide = BLACK; 
 	ParseFen(START_FEN, pos);	
 	
 	while(TRUE) { 
-
 		fflush(stdout);
 
 		if(pos->side == engineSide && checkresult(pos) == FALSE) {  
@@ -276,123 +282,120 @@ void Console_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 			SearchPosition(pos, info);
 		}	
 		
-		printf("\nRookie > ");
+		cout << "\nRookie > ";
 
 		fflush(stdout); 
-	
-		memset(&inBuf[0], 0, sizeof(inBuf));
-		fflush(stdout);
-		if (!fgets(inBuf, 80, stdin))
-		continue;
     
-		sscanf(inBuf, "%s", command);
+		getline(cin,command);
+		stringstream command_stream(command);
 		
-		if(!strcmp(command, "help")) { 
-			printf("Commands:\n");
-			printf("quit - quit game\n");
-			printf("force - computer will not think\n");
-			printf("print - show board\n");
-			printf("post - show thinking\n");
-			printf("nopost - do not show thinking\n");
-			printf("new - start new game\n");
-			printf("go - set computer thinking\n");
-			printf("depth x - set depth to x\n");
-			printf("time x - set thinking time to x seconds (depth still applies if set)\n");
-			printf("setboard x - set position to fen x\n");
-			printf("view - show current depth and movetime settings\n");
-			printf("** note ** - to reset time and depth, set to 0\n");
-			printf("enter moves using b7b8q notation\n\n\n");
+		if(command.find("help") != string::npos) { 
+			cout << "Commands:\n";
+			cout << "quit - quit game\n";
+			cout << "force - computer will not think\n";
+			cout << "print - show board\n";
+			cout << "post - show thinking\n";
+			cout << "nopost - do not show thinking\n";
+			cout << "new - start new game\n";
+			cout << "go - set computer thinking\n";
+			cout << "depth x - set depth to x\n";
+			cout << "time x - set thinking time to x seconds (depth still applies if set)\n";
+			cout << "setboard x - set position to fen x\n";
+			cout << "view - show current depth and movetime settings\n";
+			cout << "** note ** - to reset time and depth, set to 0\n";
+			cout << "enter moves using b7b8q notation\n\n\n";
 			continue;
 		}
     
-		if(!strcmp(command, "quit")) { 
+		if(command.find("quit") != string::npos) { 
 			info->quit = TRUE;
 			break; 
 		}
 		
-		if(!strcmp(command, "post")) { 
+		if(command.find("post") != string::npos) { 
 			info->POST_THINKING = TRUE;
 			continue; 
 		}
 		
-		if(!strcmp(command, "print")) { 
+		if(command.find("print") != string::npos) { 
 			PrintBoard(pos);
 			continue; 
 		}
 		
-		if(!strcmp(command, "nopost")) { 
+		if(command.find("nopost") != string::npos) { 
 			info->POST_THINKING = FALSE;
 			continue; 
 		}
 		
-		if(!strcmp(command, "force")) { 
+		if(command.find("force") != string::npos) { 
 			engineSide = BOTH; 
 			continue; 
 		} 
 		
-		if(!strcmp(command, "view")) {
-			if(depth == MAXDEPTH) printf("depth not set ");
-			else printf("depth %d",depth);
+		if(command.find("view") != string::npos) {
+			if(depth == MAXDEPTH) cout << "depth not set ";
+			else cout << "depth " << depth;
 			
-			if(movetime != 0) printf(" movetime %ds\n",movetime/1000);
-			else printf(" movetime not set\n");
+			if(movetime != 0) cout<<" movetime "<<movetime/1000 << "\n";
+			else cout<<" movetime not set\n";
 			
 			continue; 
 		}
 		
-		if(!strcmp(command, "depth")) {
-			sscanf(inBuf, "depth %d", &depth); 
+		if(command.find("depth") != string::npos) {
+			command_stream >> firstCommand  >> depth;
 		    if(depth==0) depth = MAXDEPTH;
 			continue; 
 		}
 		
-		if(!strcmp(command, "time")) {
-			sscanf(inBuf, "time %d", &movetime); 
+		if(command.find("time") != string::npos) {
+			command_stream >> firstCommand >> movetime;
 			movetime *= 1000;
 			continue; 
 		} 
 		
-		if(!strcmp(command, "new")) { 
+		if(command.find("new") != string::npos) { 
 			engineSide = BLACK; 
 			ParseFen(START_FEN, pos);
 			continue; 
 		}
 
-		if(!strcmp(command, "mirror")) { 
+		if(command.find("mirror") != string::npos) { 
 			PrintBoard(pos);
-			printf("Eval:%d\n",EvalPosition(pos));
+			cout <<"Eval:" << EvalPosition(pos) << "\n";
 			MirrorBoard(pos);
 			PrintBoard(pos);
-			printf("Eval:%d\n",EvalPosition(pos));
+			cout <<"Eval:" << EvalPosition(pos) << "\n";
 			MirrorBoard(pos);
 			continue; 
 		}
 
-		if (!strcmp(command,"eval")){
+		if (command.find("eval") != string::npos){
 			PrintBoard(pos);
-			printf("Eval: %d\n",EvalPosition(pos));
+			cout <<"Eval:" << EvalPosition(pos) << "\n";
 			MirrorBoard(pos);
 			PrintBoard(pos);
-			printf("Eval: %d\n",EvalPosition(pos));
+			cout <<"Eval:" << EvalPosition(pos) << "\n";
 			continue;
 		}
 
-		if (!strcmp(command,"setboard")){
+		if (command.find("setboard") != string::npos){
 			engineSide = BOTH;
-			ParseFen(inBuf+9,pos);
+			ParseFen(command.substr(9),pos);
 			continue;
 		}
-		if(!strcmp(command, "go")) { 
+		if(command.find("go") != string::npos) { 
 			engineSide = pos->side;  
 			continue; 
 		}	
 		
-		move = ParseMove(inBuf, pos);	
+		move = ParseMove(command, pos);	
 		if(move == NOMOVE) {
-			printf("Command unknown:%s\n",inBuf);
+			cout << "Command unknown:" << command << "\n";
 			continue;
 		}
 		MakeMove(pos, move);
 		pos->ply=0;
+		command_stream.clear();
     }	
 }
