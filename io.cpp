@@ -11,10 +11,10 @@ string PrSq(const int sq){
 }
 
 string PrMove(const int move){
-    char ff = 'a' + (char)FilesBrd[FROMSQ(move)];
-    char rf = '1' + (char)RanksBrd[FROMSQ(move)];
-    char ft = 'a' + (char)FilesBrd[TOSQ(move)];
-    char rt = '1' + (char)RanksBrd[TOSQ(move)];
+    char ff = (char)('a' + FilesBrd[FROMSQ(move)]);
+    char rf = (char)('1' + RanksBrd[FROMSQ(move)]);
+    char ft = (char)('a' + FilesBrd[TOSQ(move)]);
+    char rt = (char)('1' + RanksBrd[TOSQ(move)]);
 
     int promoted = PROMOTED(move);
 
@@ -37,7 +37,7 @@ string PrMove(const int move){
     return mvStr;
 
 } 
-int ParseMove(string move, S_BOARD *pos){
+int ParseMove(string move, Position pos){
     if (move[1]>'8' || move[1] < '1') return NOMOVE;
     if (move[3]>'8' || move[3] < '1') return NOMOVE;
     if (move[0]>'h' || move[0] < 'a') return NOMOVE;
@@ -46,8 +46,8 @@ int ParseMove(string move, S_BOARD *pos){
     int from  = FR2SQ(move[0]-'a',move[1]-'1');
     int to = FR2SQ(move[2]-'a',move[3]-'1');
 
-    ASSERT(SqOnBoard(from));
-    ASSERT(SqOnBoard(to));
+    assert(SqOnBoard(from));
+    assert(SqOnBoard(to));
 
     S_MOVELIST list[1];
     GenerateAllMoves(pos,list);

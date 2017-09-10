@@ -8,10 +8,6 @@ data.h : Module for high-level rep of a chessboard
 #include "globals.h"
 #include <string>
 
-extern char PceChar[];
-extern char SideChar[];
-extern char RankChar[];
-extern char FileChar[];
 
 extern int PiecePawn[13]; 
 extern int PieceKnight[13];

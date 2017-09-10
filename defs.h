@@ -4,20 +4,14 @@
 #include "stdlib.h"
 #include "stdio.h"
 #include <string>
+#include <iostream>
 
+#define NO_PREFETCH false
 //#define DEBUG
 #ifndef DEBUG
-//Defines an Assert function which catches errors when in debug mode
-#define ASSERT(n)
+#define assert(EXPRESSION) ((void)0)
 #else
-#define ASSERT(n)\
-if (!(n)) {\
-std::cout<<"%s - Failed", #n; \
-std::cout<<"On %s ", __DATE__; \
-std::cout<<"At %s ", __TIME__; \
-std::cout<<"In File %s ", __FILE__; \
-std::cout<<"At Line %d ", __LINE__; \
-exit(1);}
+#include <cassert>
 #endif
 
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" 
@@ -25,7 +19,7 @@ exit(1);}
 #define MAX_HASH 1024
 #define MAXGAMEMOVES 2048
 #define MAXPOSITIONMOVE 256
-#define FR2SQ(f,r) ( (21 + (f) ) + ((r) * 10))
+#define FR2SQ(f,r) (Square)( (21 + (f) ) + ((r) * 10))
 #define SQ64(sq) (Sq120ToSq64[(sq)])
 #define SQ120(sq64) (Sq64ToSq120[(sq64)])
 #define BRD_SQ_NO 120
@@ -43,12 +37,12 @@ exit(1);}
 #define IsRQ(p) (PieceRookQueen[(p)])
 #define IsKn(p) (PieceKnight[(p)])
 #define IsKi(p) (PieceKing[(p)])
-#define MIRROR64(sq) (Mirror64[(sq)])
+#define MIRROR64(sq) (Square)(Mirror64[(sq)])
 
-#define FROMSQ(m) ((m) & 0x7F)
-#define TOSQ(m) (((m) >> 7) & 0x7F)
-#define CAPTURED(m) (((m) >> 14) & 0xF)
-#define PROMOTED(m) (((m) >> 20) & 0xF)
+#define FROMSQ(m) (Square)((m) & 0x7F)
+#define TOSQ(m) (Square)(((m) >> 7) & 0x7F)
+#define CAPTURED(m) (Piece)(((m) >> 14) & 0xF)
+#define PROMOTED(m) (Piece)(((m) >> 20) & 0xF)
 
 #define MFLAGEP 0x40000
 #define MFLAGPS 0x80000
@@ -57,19 +51,25 @@ exit(1);}
 #define MFLAGCAP 0x7C000
 #define MFLAGPROM 0xF00000
 /* Definitions */
-typedef unsigned long long U64;
 
+const int MAX_MOVES = 256;
+const int MAX_PLY   = 128;
+
+typedef uint64_t Key;
+typedef uint64_t BitBoard;
+
+enum Move : int{ MOVE_NONE, MOVE_NULL = 65};
 enum {UCIMODE, XBOARDMODE, CONSOLEMODE};
 //Enumerate peices 
-enum {EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };
+enum Piece {EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };
 
-enum ranks {RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE};
+enum Ranks {RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE};
 
-enum files {FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE};
+enum Files {FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE};
 
-enum colours {WHITE, BLACK, BOTH};
+enum Colour {WHITE, BLACK, BOTH};
 
-enum squares {
+enum Square {
      A1 = 21, B1, C1, D1, E1, F1, G1, H1,
      A2 = 31, B2, C2, D2, E2, F2, G2, H2,
      A3 = 41, B3, C3, D3, E3, F3, G3, H3,
@@ -79,7 +79,44 @@ enum squares {
      A7 = 81, B7, C7, D7, E7, F7, G7, H7,
      A8 = 91, B8, C8, D8, E8, F8, G8, H8,OFFBOARD,NO_SQ
  };
-
+ enum Bound {
+    BOUND_NONE,
+    BOUND_UPPER,
+    BOUND_LOWER,
+    BOUND_EXACT = BOUND_UPPER | BOUND_LOWER
+  };
+ enum Value : int {
+    VALUE_ZERO      = 0,
+    VALUE_DRAW      = 0,
+    VALUE_KNOWN_WIN = 10000,
+    VALUE_MATE      = 32000,
+    VALUE_INFINITE  = 32001,
+    VALUE_NONE      = 32002,
+  
+    VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY,
+    VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY,
+  
+    PawnValueMg   = 171,   PawnValueEg   = 240,
+    KnightValueMg = 764,   KnightValueEg = 848,
+    BishopValueMg = 826,   BishopValueEg = 891,
+    RookValueMg   = 1282,  RookValueEg   = 1373,
+    QueenValueMg  = 2526,  QueenValueEg  = 2646,
+  
+    MidgameLimit  = 15258, EndgameLimit  = 3915
+  };
+  
+  enum Depth : int {
+    
+      ONE_PLY = 1,
+    
+      DEPTH_ZERO          =  0 * ONE_PLY,
+      DEPTH_QS_CHECKS     =  0 * ONE_PLY,
+      DEPTH_QS_NO_CHECKS  = -1 * ONE_PLY,
+      DEPTH_QS_RECAPTURES = -5 * ONE_PLY,
+    
+      DEPTH_NONE = -6 * ONE_PLY,
+      DEPTH_MAX  = MAX_PLY * ONE_PLY
+    };
 //Each bit of a 4-bit word represents the castling permissions
 enum {WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8};
 typedef struct {
@@ -92,15 +129,15 @@ typedef struct
 {
     int move;
     int castlePerm;
-    int enPas;
+    Square enPas;
     int fiftyMove;
     int posKey;
 
 }S_UNDO;
-
+/*
 enum { HFONE, HFALPHA, HFBETA, HFEXACT};
 typedef struct{
-    U64 posKey;
+    uint64_t posKey;
     int move;
     int score;
     int depth;
@@ -115,16 +152,17 @@ typedef struct{
     int hit;
     int cut;
 } S_HASHTABLE;
-
+*/
+/*
 typedef struct
 {
     int pieces[BRD_SQ_NO];
-    U64 pawns[3];
-    /*
-    U64 knights[3];
-    U64 bishops[3];
-    U64 rooks[3];
-    */
+    uint64_t pawns[3];
+    
+    uint64_t knights[3];
+    uint64_t bishops[3];
+    uint64_t rooks[3];
+    
 
     //King square for both side    
     int KingSq[2];
@@ -140,7 +178,7 @@ typedef struct
 
     int castlePerm;
 
-    U64 posKey;
+    uint64_t posKey;
 
     int pceNum[13];
     int bigPce[2];
@@ -160,7 +198,7 @@ typedef struct
     int searchKillers[2][MAXDEPTH];
 
 } S_BOARD;
-
+*/
 typedef struct {
     S_MOVE moves[MAXPOSITIONMOVE];
     int count;
@@ -188,13 +226,15 @@ typedef struct {
     float fh;
     float fhf;
 
+    int currentDepth;
+
 } S_SEARCHINFO;
 
 typedef struct {
     int useBook;
 }S_OPTIONS;
-enum {FALSE, TRUE};
 
+class Position;
 //io.c
 extern std::string PrSq(const int sq);
 extern std::string PrMove(const int move);
@@ -204,46 +244,26 @@ extern int SideValid(const int side);
 extern int FileRankValid(const int fr);
 extern int PieceValidEmpty(const int pce);
 extern int PieceValid(const int pce);
-extern void MirrorEvalTest(S_BOARD *pos);
-extern void PerftEvalTest(int depth, S_BOARD *pos);
-extern void DebugAnalysisTest(S_BOARD *pos, S_SEARCHINFO *info);
-
-//makemove.c
-extern void TakeMove(S_BOARD *pos);
-extern int MakeMove(S_BOARD *pos, int move);
-extern void MakeNullMove(S_BOARD *pos);
-extern void TakeNullMove(S_BOARD *pos);
+extern void MirrorEvalTest(Position& pos);
+extern void PerftEvalTest(int depth, Position& pos);
+extern void DebugAnalysisTest(Position& pos, S_SEARCHINFO *info);
 
 //perft.c
-extern void PerftTest(int depth, S_BOARD *pos);
+extern void PerftTest(int depth, Position& pos);
 //search.c
 
-extern void SearchPosition(S_BOARD *pos, S_SEARCHINFO *info);
+extern void SearchPosition(Position& pos, S_SEARCHINFO *info);
 //misc.c
 extern int GetTimeMs();
 extern void ReadInput(S_SEARCHINFO *info);
 
-//pvtable.c
+ //movegen.c
 
-extern void InitHashTable(S_HASHTABLE *table, const int MB);
-extern void StoreHashEntry(S_BOARD *pos, const int move, int score, const int flags, const int depth);
-extern int ProbeHashEntry(S_BOARD *pos, int *move, int *score, int alpha, int beta, int depth);
-extern int ProbePvMove(const S_BOARD *pos);
-extern int GetPvLine(const int depth, S_BOARD *pos);
-extern void ClearHashTable(S_HASHTABLE *table);
-//evaluate.c
-extern int EvalPosition(const S_BOARD *pos);
- //uci.c
- extern void Uci_Loop(S_BOARD *pos, S_SEARCHINFO *info);
-
- extern void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *list);
- extern void Console_Loop(S_BOARD *pos, S_SEARCHINFO *list);
-//movegen.c
-extern void GenerateAllMoves(const S_BOARD *pos, S_MOVELIST *list);
-extern void GenerateAllCaps(const S_BOARD *pos, S_MOVELIST *list);
-extern int MoveExists(S_BOARD *pos, const int move); 
 extern void InitMvvLva();
-extern int GetBookMove(S_BOARD *board);
+extern int GetBookMove(Position& board);
 extern void InitPolyBook();
 extern void CleanPolyBook();
+
+//Operator overloads
+
 #endif // !DEFS_H

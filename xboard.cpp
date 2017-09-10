@@ -5,46 +5,47 @@
 #include "movegen.h"
 #include "board.h"
 #include "io.h"
+#include "evaluate.h"
 #include <string>
 #include <iostream>
 #include <sstream>
 
 using namespace std;
 
-int ThreeFoldRep(const S_BOARD *pos) {
+int ThreeFoldRep(const Position& pos) {
 	int i = 0, r = 0;
-	for (i = 0; i < pos->hisPly; ++i)	{
-	    if (pos->history[i].posKey == pos->posKey) {
+	for (i = 0; i < pos.get_hisPly(); ++i)	{
+	    if (pos.get_history(i).posKey == pos.get_posKey()) {
 		    r++;
 		}
 	}
 	return r;
 }
 
-int DrawMaterial(const S_BOARD *pos) {
+int DrawMaterial(const Position& pos) {
 
-    if (pos->pceNum[wP] || pos->pceNum[bP]) return FALSE;
-    if (pos->pceNum[wQ] || pos->pceNum[bQ] || pos->pceNum[wR] || pos->pceNum[bR]) return FALSE;
-    if (pos->pceNum[wB] > 1 || pos->pceNum[bB] > 1) {return FALSE;}
-    if (pos->pceNum[wN] > 1 || pos->pceNum[bN] > 1) {return FALSE;}
-    if (pos->pceNum[wN] && pos->pceNum[wB]) {return FALSE;}
-    if (pos->pceNum[bN] && pos->pceNum[bB]) {return FALSE;}
+    if (pos.piece_number(wP) || pos.piece_number(bP)) return false;
+    if (pos.piece_number(wQ) || pos.piece_number(bQ) || pos.piece_number(wR) || pos.piece_number(bR)) return false;
+    if (pos.piece_number(wB) > 1 || pos.piece_number(bB) > 1) {return false;}
+    if (pos.piece_number(wN) > 1 || pos.piece_number(bN) > 1) {return false;}
+    if (pos.piece_number(wN) && pos.piece_number(wB)) {return false;}
+    if (pos.piece_number(bN) && pos.piece_number(bB)) {return false;}
 	
-    return TRUE;
+    return true;
 }
 
-int checkresult(S_BOARD *pos) {
+int checkresult(Position& pos) {
 
-    if (pos->fiftyMove > 100) {
-     cout << "1/2-1/2 {fifty move rule (claimed by Rookie)}\n"; return TRUE;
+    if (pos.get_fiftyMove() > 100) {
+     cout << "1/2-1/2 {fifty move rule (claimed by Rookie)}\n"; return true;
     }
 
     if (ThreeFoldRep(pos) >= 2) {
-     cout << "1/2-1/2 {3-fold repetition (claimed by Rookie)}\n"; return TRUE;
+     cout << "1/2-1/2 {3-fold repetition (claimed by Rookie)}\n"; return true;
     }
 	
-	if (DrawMaterial(pos) == TRUE) {
-     cout << "1/2-1/2 {insufficient material (claimed by Rookie)}\n"; return TRUE;
+	if (DrawMaterial(pos) == true) {
+     cout << "1/2-1/2 {insufficient material (claimed by Rookie)}\n"; return true;
     }
 	
 	S_MOVELIST list[1];
@@ -54,28 +55,28 @@ int checkresult(S_BOARD *pos) {
 	int found = 0;
 	for(MoveNum = 0; MoveNum < list->count; ++MoveNum) {	
        
-        if ( !MakeMove(pos,list->moves[MoveNum].move))  {
+        if ( !pos.MakeMove(list->moves[MoveNum].move))  {
             continue;
         }
         found++;
-		TakeMove(pos);
+		pos.TakeMove();
 		break;
     }
 	
-	if(found != 0) return FALSE;
+	if(found != 0) return false;
 
-	int InCheck = SqAttacked(pos->KingSq[pos->side],pos->side^1,pos);
+	int InCheck = pos.SqAttacked(pos.get_KingSq(pos.get_side()),pos.get_side()^1);
 	
-	if(InCheck == TRUE)	{
-	    if(pos->side == WHITE) {
-		  cout << "0-1 {black mates (claimed by Rookie)}\n";return TRUE;
+	if(InCheck == true)	{
+	    if(pos.get_side() == WHITE) {
+		  cout << "0-1 {black mates (claimed by Rookie)}\n";return true;
         } else {
-	      cout << "0-1 {white mates (claimed by Rookie)}\n";return TRUE;
+	      cout << "0-1 {white mates (claimed by Rookie)}\n";return true;
         }
     } else {
-      cout << "\n1/2-1/2 {stalemate (claimed by Rookie)}\n"; return TRUE;
+      cout << "\n1/2-1/2 {stalemate (claimed by Rookie)}\n"; return true;
     }	
-	return FALSE;	
+	return false;	
 }
 
 void PrintOptions() {
@@ -83,10 +84,10 @@ void PrintOptions() {
 	cout << "feature done=1\n";
 }
 
-void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
+void XBoard_Loop(Position& pos, S_SEARCHINFO *info) {
 
 	info->GAME_MODE = XBOARDMODE;
-	info->POST_THINKING = TRUE;
+	info->POST_THINKING = true;
 	setbuf(stdin, NULL);
 	setbuf(stdout, NULL);
 
@@ -105,21 +106,21 @@ void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 	string command;
 	string firstCommand;
 	engineSide = BLACK; 
-	ParseFen(START_FEN, pos);
+	pos.ParseFen(START_FEN);
 	depth = -1; 
 	time = -1;
 	
-	while(TRUE) { 
+	while(true) { 
 
 		fflush(stdout);
 
-		if(pos->side == engineSide && checkresult(pos) == FALSE) {  
+		if(pos.get_side() == engineSide && checkresult(pos) == false) {  
 			info->starttime = GetTimeMs();
 			info->depth = depth;
 			
 			if(time != -1) {
-				info->timeset = TRUE;
-				time /= movestogo[pos->side];
+				info->timeset = true;
+				time /= movestogo[pos.get_side()];
 				time -= 50;		
 				info->stoptime = info->starttime + time + inc;
 			} 
@@ -128,13 +129,13 @@ void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 				info->depth = MAXDEPTH;
 			}
 		
-			cout << "time:" << time << " start:" << info->starttime<< " stop:" <<info->stoptime<<" depth:"<<info->depth<<" timeset:"<<info->timeset<<" movestogo:" <<movestogo[pos->side]<<" mps:"<< mps<<"\n";
+			cout << "time:" << time << " start:" << info->starttime<< " stop:" <<info->stoptime<<" depth:"<<info->depth<<" timeset:"<<info->timeset<<" movestogo:" <<movestogo[pos.get_side()]<<" mps:"<< mps<<"\n";
 				SearchPosition(pos, info);
 			
 			if(mps != 0) {
-				movestogo[pos->side^1]--;
-				if(movestogo[pos->side^1] < 1) {
-					movestogo[pos->side^1] = mps;
+				movestogo[pos.get_side()^1]--;
+				if(movestogo[pos.get_side()^1] < 1) {
+					movestogo[pos.get_side()^1] = mps;
 				}
 			}
 			
@@ -148,7 +149,7 @@ void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 		stringstream command_stream(command);
 
 		if(command == "quit") { 
-			info->quit = TRUE;
+			info->quit = true;
 			break; 
 		}
 		
@@ -186,7 +187,9 @@ void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 		    if(MB < 4) MB = 4;
 			if(MB > 2048) MB = 2048;
 			cout << "Set Hash to "<<MB<< " MB\n";
-			InitHashTable(pos->HashTable, MB);
+			TT.resize(MB);
+			//TODO InitTTable
+			//InitHashTable(pos->HashTable, MB);
 			continue;
 		}
 		if(command.find("level") != string::npos) {
@@ -219,7 +222,7 @@ void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 		
 		if(command.find("new") != string::npos) { 
 			engineSide = BLACK; 
-			ParseFen(START_FEN, pos);
+			pos.ParseFen(START_FEN);
 			depth = -1; 
 			time = -1;
 			continue; 
@@ -227,33 +230,33 @@ void XBoard_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 		
 		if(command.find("setboard") != string::npos){
 			engineSide = BOTH;  
-			ParseFen(command.substr(9), pos); 
+			pos.ParseFen(command.substr(9)); 
 			continue; 
 		}   		
 		
 		if(command.find("go") != string::npos) { 
-			engineSide = pos->side;  
+			engineSide = pos.get_side();  
 			continue; 
 		}		
 		if(command.find("usermove") != string::npos){
-			movestogo[pos->side]--;
+			movestogo[pos.get_side()]--;
 			move = ParseMove(command.substr(9), pos);	
 			if(move == NOMOVE) continue;
-			MakeMove(pos, move);
-            pos->ply=0;
+			pos.MakeMove(move);
+            pos.clearPly();
 		}    
 			command_stream.clear();
     }	
 }
 
 
-void Console_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
+void Console_Loop(Position& pos, S_SEARCHINFO *info) {
 
 	cout << "Welcome to Rookie In Console Mode!\n";
 	cout << "Type help for commands\n\n";
 
 	info->GAME_MODE = CONSOLEMODE;
-	info->POST_THINKING = TRUE;
+	info->POST_THINKING = true;
 	setbuf(stdin, NULL);
     setbuf(stdout, NULL);
 	
@@ -265,17 +268,17 @@ void Console_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 
 
 	engineSide = BLACK; 
-	ParseFen(START_FEN, pos);	
+	pos.ParseFen(START_FEN);	
 	
-	while(TRUE) { 
+	while(true) { 
 		fflush(stdout);
 
-		if(pos->side == engineSide && checkresult(pos) == FALSE) {  
+		if(pos.get_side() == engineSide && checkresult(pos) == false) {  
 			info->starttime = GetTimeMs();
 			info->depth = depth;
 			
 			if(movetime != 0) {
-				info->timeset = TRUE;
+				info->timeset = true;
 				info->stoptime = info->starttime + movetime;
 			} 	
 			
@@ -308,22 +311,22 @@ void Console_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 		}
     
 		if(command.find("quit") != string::npos) { 
-			info->quit = TRUE;
+			info->quit = true;
 			break; 
 		}
 		
 		if(command.find("post") != string::npos) { 
-			info->POST_THINKING = TRUE;
+			info->POST_THINKING = true;
 			continue; 
 		}
 		
 		if(command.find("print") != string::npos) { 
-			PrintBoard(pos);
+			pos.PrintBoard();
 			continue; 
 		}
 		
 		if(command.find("nopost") != string::npos) { 
-			info->POST_THINKING = FALSE;
+			info->POST_THINKING = false;
 			continue; 
 		}
 		
@@ -356,46 +359,46 @@ void Console_Loop(S_BOARD *pos, S_SEARCHINFO *info) {
 		
 		if(command.find("new") != string::npos) { 
 			engineSide = BLACK; 
-			ParseFen(START_FEN, pos);
+			pos.ParseFen(START_FEN);
 			continue; 
 		}
 
 		if(command.find("mirror") != string::npos) { 
-			PrintBoard(pos);
+			pos.PrintBoard();
 			cout <<"Eval:" << EvalPosition(pos) << "\n";
-			MirrorBoard(pos);
-			PrintBoard(pos);
+			pos.MirrorBoard();
+			pos.PrintBoard();
 			cout <<"Eval:" << EvalPosition(pos) << "\n";
-			MirrorBoard(pos);
+			pos.MirrorBoard();
 			continue; 
 		}
 
 		if (command.find("eval") != string::npos){
-			PrintBoard(pos);
+			pos.PrintBoard();
 			cout <<"Eval:" << EvalPosition(pos) << "\n";
-			MirrorBoard(pos);
-			PrintBoard(pos);
+			pos.MirrorBoard();
+			pos.PrintBoard();
 			cout <<"Eval:" << EvalPosition(pos) << "\n";
 			continue;
 		}
 
 		if (command.find("setboard") != string::npos){
 			engineSide = BOTH;
-			ParseFen(command.substr(9),pos);
+			pos.ParseFen(command.substr(9));
 			continue;
 		}
 		if(command.find("go") != string::npos) { 
-			engineSide = pos->side;  
+			engineSide = pos.get_side();  
 			continue; 
 		}	
 		
-		move = ParseMove(command, pos);	
+		move = ParseMove(command,pos);	
 		if(move == NOMOVE) {
 			cout << "Command unknown:" << command << "\n";
 			continue;
 		}
-		MakeMove(pos, move);
-		pos->ply=0;
+		pos.MakeMove( move);
+		pos.clearPly();
 		command_stream.clear();
     }	
 }

@@ -5,5 +5,5 @@
 #include "board.h"
 #include "data.h"
 
-extern int SqAttacked(const int sq, const int side, const S_BOARD *pos);
+extern int SqAttacked(const int sq, const int side, const Position& pos);
 #endif // ATTACK_H

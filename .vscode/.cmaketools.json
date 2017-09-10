@@ -23,13 +23,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/ContinuousCoverage",
-                      "build/CMakeFiles/ContinuousCoverage.rule"
+                      "build/CMakeFiles/ExperimentalUpdate",
+                      "build/CMakeFiles/ExperimentalUpdate.rule"
                     ]
                   }
                 ],
-                "fullName": "ContinuousCoverage",
-                "name": "ContinuousCoverage",
+                "fullName": "ExperimentalUpdate",
+                "name": "ExperimentalUpdate",
                 "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
                 "type": "UTILITY"
               },
@@ -39,77 +39,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/ContinuousSubmit",
-                      "build/CMakeFiles/ContinuousSubmit.rule"
+                      "build/CMakeFiles/ExperimentalConfigure",
+                      "build/CMakeFiles/ExperimentalConfigure.rule"
                     ]
                   }
                 ],
-                "fullName": "ContinuousSubmit",
-                "name": "ContinuousSubmit",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "type": "UTILITY"
-              },
-              {
-                "artifacts": [
-                  "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build/Rookie++"
-                ],
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
-                "fileGroups": [
-                  {
-                    "compileFlags": "-g  ",
-                    "includePath": [
-                      {
-                        "path": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess"
-                      }
-                    ],
-                    "isGenerated": false,
-                    "language": "CXX",
-                    "sources": [
-                      "Rookie++.cpp",
-                      "bitboard.cpp",
-                      "init.cpp",
-                      "hashkeys.cpp",
-                      "data.cpp",
-                      "board.cpp",
-                      "attack.cpp",
-                      "io.cpp",
-                      "validate.cpp",
-                      "movegen.cpp",
-                      "makemove.cpp",
-                      "perft.cpp",
-                      "search.cpp",
-                      "misc.cpp",
-                      "pvtable.cpp",
-                      "evaluate.cpp",
-                      "uci.cpp",
-                      "xboard.cpp",
-                      "polybook.cpp",
-                      "polykeys.cpp"
-                    ]
-                  }
-                ],
-                "fullName": "Rookie++",
-                "linkLanguageFlags": "-g",
-                "linkLibraries": "-rdynamic",
-                "linkPath": "-L/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "linkerLanguage": "CXX",
-                "name": "Rookie++",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "type": "EXECUTABLE"
-              },
-              {
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/ExperimentalStart",
-                      "build/CMakeFiles/ExperimentalStart.rule"
-                    ]
-                  }
-                ],
-                "fullName": "ExperimentalStart",
-                "name": "ExperimentalStart",
+                "fullName": "ExperimentalConfigure",
+                "name": "ExperimentalConfigure",
                 "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
                 "type": "UTILITY"
               },
@@ -119,13 +55,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/ContinuousConfigure",
-                      "build/CMakeFiles/ContinuousConfigure.rule"
+                      "build/CMakeFiles/ExperimentalCoverage",
+                      "build/CMakeFiles/ExperimentalCoverage.rule"
                     ]
                   }
                 ],
-                "fullName": "ContinuousConfigure",
-                "name": "ContinuousConfigure",
+                "fullName": "ExperimentalCoverage",
+                "name": "ExperimentalCoverage",
                 "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
                 "type": "UTILITY"
               },
@@ -135,13 +71,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/NightlyCoverage",
-                      "build/CMakeFiles/NightlyCoverage.rule"
+                      "build/CMakeFiles/ExperimentalBuild",
+                      "build/CMakeFiles/ExperimentalBuild.rule"
                     ]
                   }
                 ],
-                "fullName": "NightlyCoverage",
-                "name": "NightlyCoverage",
+                "fullName": "ExperimentalBuild",
+                "name": "ExperimentalBuild",
                 "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
                 "type": "UTILITY"
               },
@@ -151,13 +87,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/NightlyBuild",
-                      "build/CMakeFiles/NightlyBuild.rule"
+                      "build/CMakeFiles/ExperimentalSubmit",
+                      "build/CMakeFiles/ExperimentalSubmit.rule"
                     ]
                   }
                 ],
-                "fullName": "NightlyBuild",
-                "name": "NightlyBuild",
+                "fullName": "ExperimentalSubmit",
+                "name": "ExperimentalSubmit",
                 "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
                 "type": "UTILITY"
               },
@@ -167,13 +103,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/NightlyStart",
-                      "build/CMakeFiles/NightlyStart.rule"
+                      "build/CMakeFiles/ContinuousStart",
+                      "build/CMakeFiles/ContinuousStart.rule"
                     ]
                   }
                 ],
-                "fullName": "NightlyStart",
-                "name": "NightlyStart",
+                "fullName": "ContinuousStart",
+                "name": "ContinuousStart",
                 "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
                 "type": "UTILITY"
               },
@@ -183,29 +119,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/NightlyMemoryCheck",
-                      "build/CMakeFiles/NightlyMemoryCheck.rule"
+                      "build/CMakeFiles/ContinuousUpdate",
+                      "build/CMakeFiles/ContinuousUpdate.rule"
                     ]
                   }
                 ],
-                "fullName": "NightlyMemoryCheck",
-                "name": "NightlyMemoryCheck",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/NightlyMemCheck",
-                      "build/CMakeFiles/NightlyMemCheck.rule"
-                    ]
-                  }
-                ],
-                "fullName": "NightlyMemCheck",
-                "name": "NightlyMemCheck",
+                "fullName": "ContinuousUpdate",
+                "name": "ContinuousUpdate",
                 "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
                 "type": "UTILITY"
               },
@@ -279,6 +199,227 @@
                   {
                     "isGenerated": true,
                     "sources": [
+                      "build/CMakeFiles/NightlySubmit",
+                      "build/CMakeFiles/NightlySubmit.rule"
+                    ]
+                  }
+                ],
+                "fullName": "NightlySubmit",
+                "name": "NightlySubmit",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "type": "UTILITY"
+              },
+              {
+                "artifacts": [
+                  "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build/Rookie++"
+                ],
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
+                "fileGroups": [
+                  {
+                    "compileFlags": "-g  ",
+                    "includePath": [
+                      {
+                        "path": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess"
+                      }
+                    ],
+                    "isGenerated": false,
+                    "language": "CXX",
+                    "sources": [
+                      "Rookie++.cpp",
+                      "bitboard.cpp",
+                      "init.cpp",
+                      "ttable.cpp",
+                      "data.cpp",
+                      "board.cpp",
+                      "io.cpp",
+                      "validate.cpp",
+                      "movegen.cpp",
+                      "perft.cpp",
+                      "search.cpp",
+                      "misc.cpp",
+                      "evaluate.cpp",
+                      "uci.cpp",
+                      "xboard.cpp",
+                      "polybook.cpp",
+                      "polykeys.cpp"
+                    ]
+                  }
+                ],
+                "fullName": "Rookie++",
+                "linkLanguageFlags": "-g",
+                "linkLibraries": "-rdynamic",
+                "linkPath": "-L/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "linkerLanguage": "CXX",
+                "name": "Rookie++",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "type": "EXECUTABLE"
+              },
+              {
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/ExperimentalStart",
+                      "build/CMakeFiles/ExperimentalStart.rule"
+                    ]
+                  }
+                ],
+                "fullName": "ExperimentalStart",
+                "name": "ExperimentalStart",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/ContinuousConfigure",
+                      "build/CMakeFiles/ContinuousConfigure.rule"
+                    ]
+                  }
+                ],
+                "fullName": "ContinuousConfigure",
+                "name": "ContinuousConfigure",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/NightlyCoverage",
+                      "build/CMakeFiles/NightlyCoverage.rule"
+                    ]
+                  }
+                ],
+                "fullName": "NightlyCoverage",
+                "name": "NightlyCoverage",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/NightlyMemoryCheck",
+                      "build/CMakeFiles/NightlyMemoryCheck.rule"
+                    ]
+                  }
+                ],
+                "fullName": "NightlyMemoryCheck",
+                "name": "NightlyMemoryCheck",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/NightlyMemCheck",
+                      "build/CMakeFiles/NightlyMemCheck.rule"
+                    ]
+                  }
+                ],
+                "fullName": "NightlyMemCheck",
+                "name": "NightlyMemCheck",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/ContinuousSubmit",
+                      "build/CMakeFiles/ContinuousSubmit.rule"
+                    ]
+                  }
+                ],
+                "fullName": "ContinuousSubmit",
+                "name": "ContinuousSubmit",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/ContinuousCoverage",
+                      "build/CMakeFiles/ContinuousCoverage.rule"
+                    ]
+                  }
+                ],
+                "fullName": "ContinuousCoverage",
+                "name": "ContinuousCoverage",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/ContinuousTest",
+                      "build/CMakeFiles/ContinuousTest.rule"
+                    ]
+                  }
+                ],
+                "fullName": "ContinuousTest",
+                "name": "ContinuousTest",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/ContinuousBuild",
+                      "build/CMakeFiles/ContinuousBuild.rule"
+                    ]
+                  }
+                ],
+                "fullName": "ContinuousBuild",
+                "name": "ContinuousBuild",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
+                      "build/CMakeFiles/ContinuousMemCheck",
+                      "build/CMakeFiles/ContinuousMemCheck.rule"
+                    ]
+                  }
+                ],
+                "fullName": "ContinuousMemCheck",
+                "name": "ContinuousMemCheck",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "type": "UTILITY"
+              },
+              {
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
+                "fileGroups": [
+                  {
+                    "isGenerated": true,
+                    "sources": [
                       "build/CMakeFiles/Nightly",
                       "build/CMakeFiles/Nightly.rule"
                     ]
@@ -343,13 +484,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/ContinuousTest",
-                      "build/CMakeFiles/ContinuousTest.rule"
+                      "build/CMakeFiles/NightlyBuild",
+                      "build/CMakeFiles/NightlyBuild.rule"
                     ]
                   }
                 ],
-                "fullName": "ContinuousTest",
-                "name": "ContinuousTest",
+                "fullName": "NightlyBuild",
+                "name": "NightlyBuild",
                 "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
                 "type": "UTILITY"
               },
@@ -359,157 +500,13 @@
                   {
                     "isGenerated": true,
                     "sources": [
-                      "build/CMakeFiles/ContinuousBuild",
-                      "build/CMakeFiles/ContinuousBuild.rule"
+                      "build/CMakeFiles/NightlyStart",
+                      "build/CMakeFiles/NightlyStart.rule"
                     ]
                   }
                 ],
-                "fullName": "ContinuousBuild",
-                "name": "ContinuousBuild",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/ContinuousMemCheck",
-                      "build/CMakeFiles/ContinuousMemCheck.rule"
-                    ]
-                  }
-                ],
-                "fullName": "ContinuousMemCheck",
-                "name": "ContinuousMemCheck",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/NightlySubmit",
-                      "build/CMakeFiles/NightlySubmit.rule"
-                    ]
-                  }
-                ],
-                "fullName": "NightlySubmit",
-                "name": "NightlySubmit",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/ExperimentalSubmit",
-                      "build/CMakeFiles/ExperimentalSubmit.rule"
-                    ]
-                  }
-                ],
-                "fullName": "ExperimentalSubmit",
-                "name": "ExperimentalSubmit",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/ContinuousStart",
-                      "build/CMakeFiles/ContinuousStart.rule"
-                    ]
-                  }
-                ],
-                "fullName": "ContinuousStart",
-                "name": "ContinuousStart",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/ContinuousUpdate",
-                      "build/CMakeFiles/ContinuousUpdate.rule"
-                    ]
-                  }
-                ],
-                "fullName": "ContinuousUpdate",
-                "name": "ContinuousUpdate",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/ExperimentalUpdate",
-                      "build/CMakeFiles/ExperimentalUpdate.rule"
-                    ]
-                  }
-                ],
-                "fullName": "ExperimentalUpdate",
-                "name": "ExperimentalUpdate",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/ExperimentalConfigure",
-                      "build/CMakeFiles/ExperimentalConfigure.rule"
-                    ]
-                  }
-                ],
-                "fullName": "ExperimentalConfigure",
-                "name": "ExperimentalConfigure",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/ExperimentalCoverage",
-                      "build/CMakeFiles/ExperimentalCoverage.rule"
-                    ]
-                  }
-                ],
-                "fullName": "ExperimentalCoverage",
-                "name": "ExperimentalCoverage",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "type": "UTILITY"
-              },
-              {
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build",
-                "fileGroups": [
-                  {
-                    "isGenerated": true,
-                    "sources": [
-                      "build/CMakeFiles/ExperimentalBuild",
-                      "build/CMakeFiles/ExperimentalBuild.rule"
-                    ]
-                  }
-                ],
-                "fullName": "ExperimentalBuild",
-                "name": "ExperimentalBuild",
+                "fullName": "NightlyStart",
+                "name": "NightlyStart",
                 "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
                 "type": "UTILITY"
               }
@@ -518,7 +515,7 @@
         ]
       }
     ],
-    "cookie": "0.022224735678089358",
+    "cookie": "0.9540984239615202",
     "inReplyTo": "codemodel",
     "type": "reply"
   }

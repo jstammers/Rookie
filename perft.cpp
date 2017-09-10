@@ -6,9 +6,10 @@
 #include <string>
 #include <iostream>
 
+class Position;
 long leafNodes;
-void Perft(int depth, S_BOARD *pos){
-    ASSERT(CheckBoard(pos));
+void Perft(int depth, Position& pos){
+    assert(pos.CheckBoard());
 
     if (depth == 0){
         leafNodes++;
@@ -19,20 +20,20 @@ void Perft(int depth, S_BOARD *pos){
 
     int MoveNum = 0;
     for (MoveNum = 0; MoveNum< list->count; ++MoveNum){
-        if (!MakeMove(pos,list->moves[MoveNum].move)){
+        if (!pos.MakeMove(list->moves[MoveNum].move)){
             continue;
         }
         Perft(depth-1,pos);
-        TakeMove(pos);
+        pos.TakeMove();
     }
     return;
 }
 
-void PerftTest(int depth, S_BOARD *pos) {
+void PerftTest(int depth, Position& pos) {
 
-    ASSERT(CheckBoard(pos));
+    assert(pos.CheckBoard());
 
-	PrintBoard(pos);
+	pos.PrintBoard();
 	std::cout<<"\nStarting Test To Depth:%d\n",depth;
     int start=GetTimeMs();	
 	leafNodes = 0;
@@ -44,12 +45,12 @@ void PerftTest(int depth, S_BOARD *pos) {
     int MoveNum = 0;
 	for(MoveNum = 0; MoveNum < list->count; ++MoveNum) {
         move = list->moves[MoveNum].move;
-        if ( !MakeMove(pos,move))  {
+        if ( !pos.MakeMove(move))  {
             continue;
         }
         long cumnodes = leafNodes;
         Perft(depth - 1, pos);
-        TakeMove(pos);        
+        pos.TakeMove();        
         long oldnodes = leafNodes - cumnodes;
         std::cout<<"move "<<MoveNum+1<<" : "<< PrMove(move)<< " "<< oldnodes <<"\n";
     }

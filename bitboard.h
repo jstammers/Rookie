@@ -12,11 +12,11 @@ bitboard.h : Defines methods for input and output of the bitboards.
 #define BITBOARD_H
 
 
-extern void PrintBitBoard(U64 bb);
+extern void PrintBitBoard(uint64_t bb);
 
-extern int PopBit(U64 *bb);
+extern int PopBit(uint64_t *bb);
 
-extern int CountBits(U64 b);
+extern int CountBits(uint64_t b);
 
 
 #endif // !1

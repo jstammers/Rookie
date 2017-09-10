@@ -2,11 +2,14 @@
 #include "polykeys.h"
 #include "globals.h"
 #include "io.h"
+#include "board.h"
 
 using namespace std;
 
+using namespace board;
+
 typedef struct {
-    U64 key;
+    uint64_t key;
     unsigned short move;
     unsigned short weight;
     unsigned int learn;
@@ -20,7 +23,7 @@ S_POLY_BOOK_ENTRY *entries;
 const int PolyKindOfPiece[13] = {-1, 1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10 };
 
 void InitPolyBook(){
-    EngineOptions -> useBook = FALSE;
+    EngineOptions -> useBook = false;
     //TODO change to argument or uci option
     FILE *pFile = fopen("performance.bin","rb"); 
     if (pFile == NULL){
@@ -38,7 +41,7 @@ void InitPolyBook(){
         cout << "%ld Entries found in file\n",NumEntries;
         
         if (NumEntries != 0) {
-            EngineOptions->useBook = TRUE;
+            EngineOptions->useBook = true;
         }
         entries = (S_POLY_BOOK_ENTRY*)malloc(NumEntries * sizeof(S_POLY_BOOK_ENTRY));
         rewind(pFile);
@@ -53,39 +56,39 @@ void CleanPolyBook(){
     free(entries);
 }
 
-int HasPawnForCapture(const S_BOARD *board){
+int HasPawnForCapture(const Position& board){
     int sqWithPawn = 0;
-    int targetPiece = (board->side == WHITE) ? wP : bP;
+    int targetPiece = (board.get_side() == WHITE) ? wP : bP;
 
-    if (board->enPas != NO_SQ){
-        if (board->side == WHITE){
-            sqWithPawn = board->enPas - 10;
+    if (board.get_enPas() != NO_SQ){
+        if (board.get_side() == WHITE){
+            sqWithPawn = board.get_enPas() - 10;
         }
         else{
-            sqWithPawn = board->enPas +10;
+            sqWithPawn = board.get_enPas() +10;
         }
 
-        if (board->pieces[sqWithPawn+1] == targetPiece){
-            return TRUE;
+        if (board.piece_on((Square)(sqWithPawn+1)) == targetPiece){
+            return true;
         }
-        else if (board->pieces[sqWithPawn+1] == targetPiece){
-            return TRUE;
+        else if (board.piece_on((Square)(sqWithPawn+1)) == targetPiece){
+            return true;
         }
     }
-    return FALSE;
+    return false;
 }
 
-U64 PolyKeyFromBoard(const S_BOARD *board){
+uint64_t PolyKeyFromBoard(const Position& board){
     int sq = 0, file = 0, rank = 0;
-    U64 finalKey = 0ULL;
-    int piece = EMPTY;
+    uint64_t finalKey = 0ULL;
+    Piece piece = EMPTY;
     int polyPiece = -1;
     int offset = 0;
 
     for (sq = 0; sq < BRD_SQ_NO; ++sq){
-        piece = board->pieces[sq];
-        if (piece != NO_SQ && piece != EMPTY && piece != OFFBOARD){
-            ASSERT(piece >= wP && piece <= bK);
+        piece = board.piece_on((Square)sq);
+        if (piece != EMPTY){
+            assert(piece >= wP && piece <= bK);
             polyPiece = PolyKindOfPiece[piece];
             rank = RanksBrd[sq];
             file = FilesBrd[sq];
@@ -97,19 +100,19 @@ U64 PolyKeyFromBoard(const S_BOARD *board){
     //castling
     offset = 768;
 
-    if (board->castlePerm & WKCA) finalKey ^= Random64Poly[offset + 0];
-    if (board->castlePerm & WQCA) finalKey ^= Random64Poly[offset + 1];
-    if (board->castlePerm & BKCA) finalKey ^= Random64Poly[offset + 2];
-    if (board->castlePerm & BQCA) finalKey ^= Random64Poly[offset + 3];
+    if (board.get_castlePerm() & WKCA) finalKey ^= Random64Poly[offset + 0];
+    if (board.get_castlePerm() & WQCA) finalKey ^= Random64Poly[offset + 1];
+    if (board.get_castlePerm() & BKCA) finalKey ^= Random64Poly[offset + 2];
+    if (board.get_castlePerm() & BQCA) finalKey ^= Random64Poly[offset + 3];
 
     //enpassant
     offset = 772;
-    if (HasPawnForCapture(board)==TRUE){
-        file = FilesBrd[board->enPas];
+    if (HasPawnForCapture(board)==true){
+        file = FilesBrd[board.get_enPas()];
         finalKey ^= Random64Poly[offset+file];
     }
 
-    if (board->side == WHITE){
+    if (board.get_side() == WHITE){
         finalKey ^= Random64Poly[780];
     }
     return finalKey;
@@ -131,7 +134,7 @@ unsigned int endian_swap_u32(unsigned int x)
     return x;
 } 
 
-U64 endian_swap_u64(U64 x) 
+uint64_t endian_swap_u64(uint64_t x) 
 { 
     x = (x>>56) | 
         ((x<<40) & 0x00FF000000000000) | 
@@ -143,7 +146,7 @@ U64 endian_swap_u64(U64 x)
         (x<<56); 
     return x;
 }
-int ConvertPolyMoveToInternalMove(unsigned short polyMove, S_BOARD *board){
+int ConvertPolyMoveToInternalMove(unsigned short polyMove, Position& board){
 	
 	int ff = (polyMove >> 6) & 7;
 	int fr = (polyMove >> 9) & 7;
@@ -163,7 +166,7 @@ int ConvertPolyMoveToInternalMove(unsigned short polyMove, S_BOARD *board){
     return ParseMove(moveString,board);
 }
 
-int GetBookMove(S_BOARD *board){
+int GetBookMove(Position& board){
     int index = 0;
     S_POLY_BOOK_ENTRY *entry;
     unsigned short move;
@@ -171,7 +174,7 @@ int GetBookMove(S_BOARD *board){
     int bookMoves[MAXBOOKMOVES];
     int tempMove = NOMOVE;
     int count = 0;
-    U64 polyKey = PolyKeyFromBoard(board);
+    uint64_t polyKey = PolyKeyFromBoard(board);
 
     for (entry = entries; entry < entries+NumEntries; entry++){
         if (polyKey == endian_swap_u64(entry->key)){

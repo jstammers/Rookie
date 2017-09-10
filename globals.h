@@ -6,11 +6,11 @@
 
 extern int Sq120ToSq64[BRD_SQ_NO];
 extern int Sq64ToSq120[64];
-extern U64 SetMask[64];
-extern U64 ClearMask[64];
-extern U64 PieceKeys[13][120];
-extern U64 SideKey;
-extern U64 CastleKeys[16];
+extern uint64_t SetMask[64];
+extern uint64_t ClearMask[64];
+extern uint64_t PieceKeys[13][120];
+extern uint64_t SideKey;
+extern uint64_t CastleKeys[16];
 
 extern int PieceBig[13];
 extern int PieceMaj[13];
@@ -22,12 +22,12 @@ extern int FilesBrd[BRD_SQ_NO];
 extern int RanksBrd[BRD_SQ_NO];
 
 extern const int Mirror64[64];
-extern U64 FileBBMask[8];
-extern U64 RankBBMask[8];
+extern uint64_t FileBBMask[8];
+extern uint64_t RankBBMask[8];
 
-extern U64 BlackPassedMask[64];
-extern U64 WhitePassedMask[64];
-extern U64 IsolatedMask[64];
+extern uint64_t BlackPassedMask[64];
+extern uint64_t WhitePassedMask[64];
+extern uint64_t IsolatedMask[64];
 
 extern S_OPTIONS EngineOptions[1];
 #endif //GLOBALS_H

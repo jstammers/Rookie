@@ -8,22 +8,22 @@ const int BitTable[64] = {
   58, 20, 37, 17, 36, 8
 };
 //Sets the first bit which is populated in the bitboard to zero
-int PopBit(U64 *bb){
-    U64 b = *bb ^ (*bb-1);
+int PopBit(uint64_t *bb){
+    uint64_t b = *bb ^ (*bb-1);
     unsigned int fold = (unsigned) ((b & 0xffffffff) ^ (b >> 32));
     *bb &= (*bb-1);
     return BitTable[(fold * 0x783a9b23) >> 26];
 }
 
 // Returns number of bits which are 1
-int CountBits(U64 b){
+int CountBits(uint64_t b){
     int r;
     for (r = 0; b; r++, b &= b-1 );
     return r;
 }
 
-void PrintBitBoard(U64 bb){
-    U64 shiftMe = 1ULL;
+void PrintBitBoard(uint64_t bb){
+    uint64_t shiftMe = 1ULL;
 
     int rank = 0;
     int file = 0;

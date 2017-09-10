@@ -10,21 +10,25 @@
 
 #C++ porting
     [x] Change i/o
-    [ ] Change from cstyle string ops to c++
-    [ ] Change from True/False enums to bool
+    [x] Change from cstyle string ops to c++
+    [x] Change from True/False enums to bool
+    [ ] Avoid pointers and hide data representation of objects
+    [ ] Use functions to access parts needed
     [ ] Piece class
         [ ] values
     [ ] Bitboard class
         [ ] set bit/ clear bit
     [ ] Board class
-        [ ] Print board
-        [ ] Set board
-        [ ] Get board
+        [x] Change all references to S_BOARD members to Inline accessor functions
+        [ ] Move functions from Init which initialise board into Position class
+        [ ] Change how mirror board works to just create a new instance which gets destroyed
+        [x] Refactor anything which takes a constant pointer to S_BOARD to take the value of a Position object
     [ ] Square class
         [ ] Represents each square on the board
         [ ] File 
         [ ] Rank
     [ ] Hashtable
+        [ ] More efficient storage of a move - 32bit to 16bit?
     [ ] Move generation
     [ ] Evaluation
     [ ]

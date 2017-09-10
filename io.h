@@ -8,5 +8,5 @@
 #include <iostream>
 
 extern void PrintMoveList(const S_MOVELIST *list);
-extern int ParseMove(std::string, S_BOARD *pos );
+extern int ParseMove(std::string, Position pos );
 #endif // !1f IO_H

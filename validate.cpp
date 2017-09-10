@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include "io.h"
+#include "evaluate.h"
 
 int SqOnBoard(const int sq){
     return (FilesBrd[sq] == OFFBOARD || RanksBrd[sq] == OFFBOARD)  ? 0 : 1;
@@ -28,7 +29,7 @@ int PieceValid(const int pce){
     return (pce >= wP && pce <= bK) ? 1 : 0; 
 }
 
-void MirrorEvalTest(S_BOARD *pos) {
+void MirrorEvalTest(Position& pos) {
     FILE *file;
     file = fopen("mirror.epd","r");
     char lineIn [1024];
@@ -39,18 +40,18 @@ void MirrorEvalTest(S_BOARD *pos) {
         return;
     }  else {
         while(fgets (lineIn , 1024 , file) != NULL) {
-            ParseFen(lineIn, pos);
+            pos.ParseFen(lineIn);
             positions++;
             ev1 = EvalPosition(pos);
-            MirrorBoard(pos);
+            pos.MirrorBoard();
             ev2 = EvalPosition(pos);
 
             if(ev1 != ev2) {
                 std::cout << "\n\n\n";
-                ParseFen(lineIn, pos);
-                PrintBoard(pos);
-                MirrorBoard(pos);
-                PrintBoard(pos);
+                pos.ParseFen(lineIn);
+                pos.PrintBoard();
+                pos.MirrorBoard();
+                pos.PrintBoard();
                 std::cout << "\n\nMirror Fail:\n"<< lineIn <<"\n";
                 getchar();
                 return;
@@ -65,14 +66,14 @@ void MirrorEvalTest(S_BOARD *pos) {
     }
 }
 
-void DebugAnalysisTest(S_BOARD *pos, S_SEARCHINFO *info) {
+void DebugAnalysisTest(Position& pos, S_SEARCHINFO *info) {
 
 	FILE *file;
     file = fopen("lct2.epd","r");
     char lineIn [1024];
 
 	info->depth = 6;
-	info->timeset = TRUE;
+	info->timeset = true;
 	int time = 1140000;
 
 
@@ -82,9 +83,11 @@ void DebugAnalysisTest(S_BOARD *pos, S_SEARCHINFO *info) {
     }  else {
         while(fgets (lineIn , 1024 , file) != NULL) {
 			info->starttime = GetTimeMs();
-			info->stoptime = info->starttime + time;
-			ClearHashTable(pos->HashTable);
-            ParseFen(lineIn, pos);
+            info->stoptime = info->starttime + time;
+            TT.clear();
+            //TODO Add ClearTTable
+			//ClearHashTable(pos->HashTable);
+            pos.ParseFen(lineIn);
             std::cout << "\n" <<lineIn<< "\n";
 			std::cout << "time:" <<time<<" start:" << info->starttime <<" stop:" << info->stoptime<<" depth:"<<info->depth << " timeset:" << info->timeset<< "\n",
 				time,info->starttime,info->stoptime,info->depth,info->timeset;
@@ -94,7 +97,7 @@ void DebugAnalysisTest(S_BOARD *pos, S_SEARCHINFO *info) {
     }
 }
 
-void PerftEvalTest(int depth, S_BOARD *pos){
+void PerftEvalTest(int depth, Position& pos){
     FILE *file;
     file = fopen("perfsuite.epd","r");
     char lineIn[1024];
@@ -106,7 +109,7 @@ void PerftEvalTest(int depth, S_BOARD *pos){
     }
     else{
         while (fgets(lineIn,1024,file) != NULL){
-            ParseFen(lineIn,pos);
+            pos.ParseFen(lineIn);
             positions++;
             PerftTest(depth,pos);
 

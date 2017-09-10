@@ -2,12 +2,14 @@
 #include "defs.h"
 #include "board.h"
 #include "init.h"
+#include "interface.h"
 #include "bitboard.h"
 #include "globals.h"
 #include "data.h"
 #include "attack.h"
 #include "movegen.h"
 #include "io.h"
+#include "interface.h"
 #include <string>
 #include <iostream>
 
@@ -30,25 +32,25 @@ int main(int argc, char *argv[]){
 
 	AllInit();	
 	
-	S_BOARD pos[1];
+	Position pos;
+	TT.resize(4);
     S_SEARCHINFO info[1];  
-	info->quit = FALSE;
- 	pos->HashTable->pTable = NULL;
-    InitHashTable(pos->HashTable,64);
+	info->quit = false;
+	TT.clear();
 	setbuf(stdin, NULL);
     setbuf(stdout, NULL);
 
 	int argNum = 0;
 	for (argNum = 0; argNum < argc; ++argNum){
 		if (argv[argNum]=="NoBook"){
-			EngineOptions->useBook = FALSE;
+			EngineOptions->useBook = false;
 			}
 	}	
 	
 	std::cout << "Welcome to Rookie! Type 'rookie' for console mode...\n";
 	
 	string line;
-	while (TRUE) {
+	while (true) {
 		
 		getline(cin,line);
 
@@ -56,22 +58,22 @@ int main(int argc, char *argv[]){
 			continue;
 		if (line=="uci") {			
 			Uci_Loop(pos, info);
-			if(info->quit == TRUE) break;
+			if(info->quit == true) break;
 			continue;
 		} else if (line=="xboard")	{
 			XBoard_Loop(pos, info);
-			if(info->quit == TRUE) break;
+			if(info->quit == true) break;
 			continue;
 		} else if (line=="rookie")	{
 			Console_Loop(pos, info);
-			if(info->quit == TRUE) break;
+			if(info->quit == true) break;
 			continue;	
 		} else if(line=="quit")	{
 			break;
 		}
 	}
 	
-	free(pos->HashTable->pTable);
+	
 	CleanPolyBook();
 	return 0;
 }

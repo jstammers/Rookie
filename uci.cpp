@@ -9,29 +9,29 @@ using namespace std;
 
 #define INPUTBUFFER 400 * 6
 
-void ParseGo(string line, S_SEARCHINFO *info,S_BOARD *pos){
+void ParseGo(string line, S_SEARCHINFO *info, Position& pos){
     int depth = -1, movestogo = 30,movetime = -1;
 	int time = -1, inc = 0;
-	info->timeset = FALSE;
+	info->timeset = false;
     
     size_t found = line.find("infinite");
 	if (found != string::npos){
 		;
 	} 
 	found = line.find("binc");
-	if ( found != string::npos && pos->side == BLACK) {
+	if ( found != string::npos && pos.get_side() == BLACK) {
 		inc = stoi(line.substr(found+5));
 	}
 	found = line.find("winc");
-	if (found != string::npos && pos->side == WHITE) {
+	if (found != string::npos && pos.get_side() == WHITE) {
 		inc = stoi(line.substr(found+5));
 	} 
     found = line.find("wtime");
-	if (found != string::npos && pos->side == WHITE) {
+	if (found != string::npos && pos.get_side() == WHITE) {
 		time = stoi(line.substr(found+6));
 	} 
 	found = line.find("btime");
-	if (found != string::npos && pos->side == BLACK) {
+	if (found != string::npos && pos.get_side() == BLACK) {
 		time = stoi(line.substr(found+6));
 	} 
 	found = line.find("movestogo");
@@ -56,7 +56,7 @@ void ParseGo(string line, S_SEARCHINFO *info,S_BOARD *pos){
 	info->depth = depth;
 	
 	if(time != -1) {
-		info->timeset = TRUE;
+		info->timeset = true;
 		time /= movestogo;
 		time -= 50;		
 		info->stoptime = info->starttime + time + inc;
@@ -70,19 +70,19 @@ void ParseGo(string line, S_SEARCHINFO *info,S_BOARD *pos){
 	SearchPosition(pos, info);   
 };
 
-void ParsePosition(string lineIn, S_BOARD *pos){
+void ParsePosition(string lineIn, Position& pos){
 
     lineIn += 9;
     //char *ptrChar = lineIn;
     if (lineIn.find("startpos") != string::npos){
-        ParseFen(START_FEN,pos);
+        pos.ParseFen(START_FEN);
     } else {
         size_t fenStart = lineIn.find("fen");
         if (fenStart == string::npos){
-            ParseFen(START_FEN,pos);
+            pos.ParseFen(START_FEN);
         } else {
             string fenString = lineIn.substr(fenStart+3);
-            ParseFen(fenString,pos);
+            pos.ParseFen(fenString);
         }
     }
 
@@ -96,14 +96,14 @@ void ParsePosition(string lineIn, S_BOARD *pos){
         for (int i = 0; ss>>move_string; i++){
             move = ParseMove(move_string,pos);
             if (move == NOMOVE) break;
-            MakeMove(pos,move);
-            pos->ply = 0;
+            pos.MakeMove(move);
+            pos.clearPly();
         }
     }
-    PrintBoard(pos);
+    pos.PrintBoard();
    }
 
-void Uci_Loop(S_BOARD *pos, S_SEARCHINFO *info){
+void Uci_Loop(Position& pos, S_SEARCHINFO *info){
 
     setbuf(stdin, NULL);
     setbuf(stdout, NULL);
@@ -117,7 +117,7 @@ void Uci_Loop(S_BOARD *pos, S_SEARCHINFO *info){
     cout << "uciok\n";
 
 
-    while (TRUE){
+    while (true){
         fflush(stdout);
         getline(cin,input_line);
         if (input_line.find("isready") != string::npos){
@@ -130,7 +130,7 @@ void Uci_Loop(S_BOARD *pos, S_SEARCHINFO *info){
         }else if (input_line.find("go") != string::npos){
          ParseGo(input_line,info,pos);   
         }else if (input_line.find("quit") != string::npos){
-            info->quit == TRUE;
+            info->quit == true;
             break;
         }else if (input_line.find("uci") != string::npos){
             cout << "id name " << NAME << "\n";
@@ -144,14 +144,16 @@ void Uci_Loop(S_BOARD *pos, S_SEARCHINFO *info){
             MB = stoi(input_line.substr(last_index+1));
 			if(MB < 4) MB = 4;
 			if(MB > 2048) MB = 2048;
-			cout << "Set Hash to " << MB << " MB\n";
-			InitHashTable(pos->HashTable, MB);
+            cout << "Set Hash to " << MB << " MB\n";
+            TT.resize(MB);
+            //TODO Init TTable
+			//InitHashTable(pos->HashTable, MB);
 		}
          else if (input_line.find("setoption name Book value ") != string::npos) {			
             if (input_line.find("true") != string::npos){
-                EngineOptions->useBook = TRUE;
+                EngineOptions->useBook = true;
             }else{
-                EngineOptions->useBook = FALSE;
+                EngineOptions->useBook = false;
             }
 
 		}

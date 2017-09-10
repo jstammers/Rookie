@@ -3,14 +3,20 @@
 #include "board.h"
 #include "movegen.h"
 #include "globals.h"
+#include "evaluate.h"
+
 
 	
 int rootDepth;
+class Position;
+namespace{
+	TTEntry* tte;
+}
 
 static void CheckUp(S_SEARCHINFO *info) {
 	// .. check if time up, or interrupt from GUI
-	if(info->timeset == TRUE && GetTimeMs() > info->stoptime) {
-		info->stopped = TRUE;
+	if(info->timeset == true && GetTimeMs() > info->stoptime) {
+		info->stopped = true;
 	}
 		
 	ReadInput(info);
@@ -34,50 +40,49 @@ static void PickNextMove(int moveNum, S_MOVELIST *list) {
 	list->moves[bestNum] = temp;
 }
 
-static int IsRepetition(const S_BOARD *pos) {
+static int IsRepetition(const Position& pos) {
 
 	int index = 0;
 
-	for(index = pos->hisPly - pos->fiftyMove; index < pos->hisPly-1; ++index) {	
-		ASSERT(index >= 0 && index < MAXGAMEMOVES);		
-		if(pos->posKey == pos->history[index].posKey) {
-			return TRUE;
+	for(index = pos.get_hisPly() - pos.get_fiftyMove(); index < pos.get_hisPly()-1; ++index) {	
+		assert(index >= 0 && index < MAXGAMEMOVES);		
+		if(pos.get_posKey() == pos.get_history(index).posKey) {
+			return true;
 		}
 	}	
-	return FALSE;
+	return false;
 }
 
-static void ClearForSearch(S_BOARD *pos, S_SEARCHINFO *info) {
+static void ClearForSearch(Position& pos, S_SEARCHINFO *info) {
 	
 	int index = 0;
 	int index2 = 0;
 	
 	for(index = 0; index < 13; ++index) {
 		for(index2 = 0; index2 < BRD_SQ_NO; ++index2) {
-			pos->searchHistory[index][index2] = 0;
+			pos.set_searchHistory((Piece)index,(Square)index2) = 0;
 		}
 	}
 	
 	for(index = 0; index < 2; ++index) {
 		for(index2 = 0; index2 < MAXDEPTH; ++index2) {
-			pos->searchKillers[index][index2] = 0;
+			pos.set_searchKillers(index,index2) = 0;
 		}
 	}	
-	
-	pos->HashTable->overWrite=0;
-	pos->HashTable->hit=0;	
-	pos->HashTable->cut=0;	
-	pos->ply = 0;
+	//TODO Add TTable Clear
+	TT.clear();
+	//tte = TT.first_entry((Key)pos.get_posKey());
+	pos.clearPly();
 	
 	info->stopped = 0;
 	info->nodes = 0;
 	info->fh = 0;
 	info->fhf = 0;
+	info->nullCut = 0;
 }
 
-static int Quiescence(int alpha, int beta, S_BOARD *pos, S_SEARCHINFO *info) {
-
-	ASSERT(CheckBoard(pos));
+static int Quiescence(int alpha, int beta, Position& pos, S_SEARCHINFO *info) {
+	assert(pos.CheckBoard());
 	
 	if(( info->nodes & 2047 ) == 0) {
 		CheckUp(info);
@@ -85,11 +90,11 @@ static int Quiescence(int alpha, int beta, S_BOARD *pos, S_SEARCHINFO *info) {
 	
 	info->nodes++;
 	
-	if(IsRepetition(pos) || pos->fiftyMove >= 100) {
+	if(IsRepetition(pos) || pos.get_fiftyMove() >= 100) {
 		return 0;
 	}
 	
-	if(pos->ply > MAXDEPTH - 1) {
+	if(pos.get_ply() > MAXDEPTH - 1) {
 		return EvalPosition(pos);
 	}
 	
@@ -116,15 +121,15 @@ static int Quiescence(int alpha, int beta, S_BOARD *pos, S_SEARCHINFO *info) {
 			
 		PickNextMove(MoveNum, list);	
 		
-        if ( !MakeMove(pos,list->moves[MoveNum].move))  {
+        if ( !pos.MakeMove(list->moves[MoveNum].move))  {
             continue;
         }
         
 		Legal++;
 		Score = -Quiescence( -beta, -alpha, pos, info);		
-        TakeMove(pos);
+        pos.TakeMove();
 		
-		if(info->stopped == TRUE) {
+		if(info->stopped == true) {
 			return 0;
 		}
 		
@@ -144,10 +149,10 @@ static int Quiescence(int alpha, int beta, S_BOARD *pos, S_SEARCHINFO *info) {
 	return alpha;
 }
 
-static int AlphaBeta(int alpha, int beta, int depth, S_BOARD *pos, S_SEARCHINFO *info, int DoNull) {
+static int AlphaBeta(int alpha, int beta, int depth, Position& pos, S_SEARCHINFO *info, int DoNull) {
 
-	ASSERT(CheckBoard(pos)); 
-	
+	assert(pos.CheckBoard()); 
+	//TT.new_search();
 	if(depth == 0) {
 		return Quiescence(alpha, beta, pos, info);
 		// return EvalPosition(pos);
@@ -159,38 +164,49 @@ static int AlphaBeta(int alpha, int beta, int depth, S_BOARD *pos, S_SEARCHINFO 
 		
 	info->nodes++;
 	
-	if((IsRepetition(pos) || pos->fiftyMove >= 100) && pos->ply) {	
+	if((IsRepetition(pos) || pos.get_fiftyMove() >= 100) && pos.get_ply()) {	
 		return 0;
 	}
 	
-	if(pos->ply > MAXDEPTH - 1) {
+	if(pos.get_ply() > MAXDEPTH - 1) {
 		return EvalPosition(pos);
 	}
 	
-	int InCheck = SqAttacked(pos->KingSq[pos->side],pos->side^1,pos);
+	int InCheck = pos.SqAttacked(pos.get_KingSq(pos.get_side()),pos.get_side()^1);
 	
-	if(InCheck == TRUE) {
+	if(InCheck == true) {
 		depth++;
 	}
 	
 	int Score = -INFINITE;
 	int PvMove = NOMOVE;
-	
-	if( ProbeHashEntry(pos, &PvMove, &Score, alpha, beta, depth) == TRUE ) {
+	bool found;
+	tte = TT.probe((Key)pos.get_posKey(),found);
+	if (found)
+	{
+	//	std::cout << "Key:" << pos.get_posKey() << " Move:" << PrMove(tte->move())<<"\n";
+		Score = tte->value();
+		PvMove = tte->move();
+		if (tte->bound() == BOUND_LOWER && Score<= alpha) {Score = alpha; return Score;}
+		else if (tte->bound() == BOUND_UPPER && Score >= beta) {Score = beta; return Score;}
+	}
+	//TODO Replace this with new TTable
+	/*
+	if( ProbeHashEntry(pos, &PvMove, &Score, alpha, beta, depth) == true ) {
 		pos->HashTable->cut++;
 		return Score;
 	}
-	
-	if( DoNull && !InCheck && pos->ply && (pos->bigPce[pos->side] > 0) && depth >= 4) {
-		MakeNullMove(pos);
-		Score = -AlphaBeta( -beta, -beta + 1, depth-4, pos, info, FALSE);
-		TakeNullMove(pos);
-		if(info->stopped == TRUE) {
+	*/
+	if( DoNull && !InCheck && pos.get_ply() && (pos.get_bigPce(pos.get_side()) > 0) && depth >= 4) {
+		pos.MakeNullMove();
+		Score = -AlphaBeta( -beta, -beta + 1, depth-4, pos, info, false);
+		pos.TakeNullMove();
+		if(info->stopped == true) {
 			return 0;
 		}		
 		
 		if (Score >= beta && abs(Score) < ISMATE) {		 
-			info->nullCut++;
+			//info->nullCut++;
 		  return beta;
 		}	
 	}
@@ -220,21 +236,22 @@ static int AlphaBeta(int alpha, int beta, int depth, S_BOARD *pos, S_SEARCHINFO 
 			
 		PickNextMove(MoveNum, list);	
 		
-        if ( !MakeMove(pos,list->moves[MoveNum].move))  {
+        if ( !pos.MakeMove(list->moves[MoveNum].move))  {
             continue;
         }
         
 		Legal++;
-		Score = -AlphaBeta( -beta, -alpha, depth-1, pos, info, TRUE);
-		TakeMove(pos);
+		Score = -AlphaBeta( -beta, -alpha, depth-1, pos, info, true);
+		pos.TakeMove();
 		
-		if(info->stopped == TRUE) {
+		if(info->stopped == true) {
 			return 0;
 		}		
 		if(Score > BestScore) {
 			BestScore = Score;
 			BestMove = list->moves[MoveNum].move;
 			if(Score > alpha) {
+		//		pos.add_PvLine(depth-1,BestMove);
 				if(Score >= beta) {
 					if(Legal==1) {
 						info->fhf++;
@@ -242,18 +259,18 @@ static int AlphaBeta(int alpha, int beta, int depth, S_BOARD *pos, S_SEARCHINFO 
 					info->fh++;	
 					
 					if(!(list->moves[MoveNum].move & MFLAGCAP)) {
-						pos->searchKillers[1][pos->ply] = pos->searchKillers[0][pos->ply];
-						pos->searchKillers[0][pos->ply] = list->moves[MoveNum].move;
+						pos.shift_SearchKillers(list->moves[MoveNum].move);
 					}
-					
-					StoreHashEntry(pos, BestMove, beta, HFBETA, depth);
+					tte->save((Key)pos.get_posKey(),(Value)beta,BOUND_UPPER,(Depth)depth,(Move)BestMove,VALUE_NONE,TT.generation());
+					//TODO Change To TTAble
+					//StoreHashEntry(pos, BestMove, beta, HFBETA, depth);
 					
 					return beta;
 				}
 				alpha = Score;
 				
 				if(!(list->moves[MoveNum].move & MFLAGCAP)) {
-					pos->searchHistory[pos->pieces[FROMSQ(BestMove)]][TOSQ(BestMove)] += depth;
+					pos.set_searchHistory(pos.piece_on(FROMSQ(BestMove)),TOSQ(BestMove)) += depth;
 				}
 			}
 		}		
@@ -261,22 +278,26 @@ static int AlphaBeta(int alpha, int beta, int depth, S_BOARD *pos, S_SEARCHINFO 
 	
 	if(Legal == 0) {
 		if(InCheck) {
-			return -INFINITE + pos->ply;
+			return -INFINITE + pos.get_ply();
 		} else {
 			return 0;
 		}
 	}
 	
 	if(alpha != OldAlpha) {
-		StoreHashEntry(pos, BestMove, BestScore, HFEXACT, depth);
+		//CHange to TTable
+		tte->save((Key)pos.get_posKey(),(Value)BestScore,BOUND_EXACT,(Depth)depth,(Move)BestMove,VALUE_NONE,TT.generation());
+		//StoreHashEntry(pos, BestMove, BestScore, HFEXACT, depth);
 	} else {
-		StoreHashEntry(pos, BestMove, alpha, HFALPHA, depth);
+		//Change to TTAble
+		tte->save((Key)pos.get_posKey(),(Value)alpha,BOUND_LOWER,(Depth)depth,(Move)BestMove,VALUE_NONE,TT.generation());
+		//StoreHashEntry(pos, BestMove, alpha, HFALPHA, depth);
 	}
 	
 	return alpha;
 } 
 
-void SearchPosition(S_BOARD *pos, S_SEARCHINFO *info) {
+void SearchPosition(Position& pos, S_SEARCHINFO *info) {
 	
 	int bestMove = NOMOVE;
 	int bestScore = -INFINITE;
@@ -285,7 +306,7 @@ void SearchPosition(S_BOARD *pos, S_SEARCHINFO *info) {
 	int pvNum = 0;
 	
 	ClearForSearch(pos,info);
-	if (EngineOptions-> useBook == TRUE){
+	if (EngineOptions-> useBook == true){
 	
 		bestMove = GetBookMove(pos);
 	}
@@ -295,32 +316,32 @@ void SearchPosition(S_BOARD *pos, S_SEARCHINFO *info) {
 		for( currentDepth = 1; currentDepth <= info->depth; ++currentDepth ) {
 							// alpha	 beta
 			rootDepth = currentDepth;
-			bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth, pos, info, TRUE);
-		
-			if(info->stopped == TRUE) {
+		//	info->currentDepth = rootDepth;
+			bestScore = AlphaBeta(-INFINITE, INFINITE, currentDepth, pos, info, true);
+			if(info->stopped == true) {
 				break;
 			}
 		
-			pvMoves = GetPvLine(currentDepth, pos);
-			bestMove = pos->pvArray[0];
+			pvMoves = pos.getPvLine(currentDepth);
+			bestMove = pos.getPvMove(0);
 			if(info->GAME_MODE == UCIMODE) {
 				std::cout<<"info score cp " << bestScore << " depth " << currentDepth << " nodes " << info->nodes <<" time " << (GetTimeMs()-info->starttime)<< " ";
-			} else if(info->GAME_MODE == XBOARDMODE && info->POST_THINKING == TRUE) {
+			} else if(info->GAME_MODE == XBOARDMODE && info->POST_THINKING == true) {
 				std::cout<< currentDepth << " " <<bestScore << " " << (GetTimeMs()-info->starttime)/10 << " " << info->nodes;
-			} else if(info->POST_THINKING == TRUE) {
+			} else if(info->POST_THINKING == true) {
 				std::cout << "score:" << bestScore << " depth:" << currentDepth << "nodes: " << info->nodes <<" time:" << (GetTimeMs()-info->starttime)<<"(ms) ";
 
 			}
-			if(info->GAME_MODE == UCIMODE || info->POST_THINKING == TRUE) {
-				pvMoves = GetPvLine(currentDepth, pos);	
+			if(info->GAME_MODE == UCIMODE || info->POST_THINKING == true) {
+				//pvMoves = TT.getPvLine(currentDepth, pos);	
 				std::cout<<"pv";		
 				for(pvNum = 0; pvNum < pvMoves; ++pvNum) {
-					std::cout<<" " << PrMove(pos->pvArray[pvNum]);
+					std::cout<<" " << PrMove(pos.getPvMove(pvNum));
 				}
 				std::cout<<"\n";
 			}
 		
-			//printf("Hits:%d Overwrite:%d NewWrite:%d Cut:%d\n",pos->HashTable->hit,pos->HashTable->overWrite,pos->HashTable->newWrite,pos->HashTable->cut);
+			//std::cout << "Hits:"<< info->nullCut <<"\n";//<<"Overwrite:%d NewWrite:%d Cut:%d\n",pos->HashTable->hit,pos->HashTable->overWrite,pos->HashTable->newWrite,pos->HashTable->cut);
 		}
 	}
 
@@ -328,11 +349,11 @@ void SearchPosition(S_BOARD *pos, S_SEARCHINFO *info) {
 		std::cout << "bestmove "<< PrMove(bestMove) << "\n";
 	} else if(info->GAME_MODE == XBOARDMODE) {		
 		std::cout << "move " << PrMove(bestMove) << "\n"; 
-		MakeMove(pos, bestMove);
+		pos.MakeMove(bestMove);
 	} else {	
-		std::cout << "\n\n***!! Vice makes move "<< PrMove(bestMove) << " !!***\n\n";
-		MakeMove(pos, bestMove);
-		PrintBoard(pos);
+		std::cout << "\n\n***!! Rookie makes move "<< PrMove(bestMove) << " !!***\n\n";
+		pos.MakeMove(bestMove);
+		pos.PrintBoard();
 	}
 	
 }

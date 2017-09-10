@@ -9,6 +9,7 @@
 #include "defs.h"
 #include "stdio.h"
 #include "string.h"
+#include "misc.h"
 
 int GetTimeMs(){
     #ifdef WIN32
@@ -61,7 +62,7 @@ void ReadInput(S_SEARCHINFO *info) {
   char            input[256] = "", *endc;
 
     if (InputWaiting()) {    
-		info->stopped = TRUE;
+		info->stopped = true;
 		do {
 		  bytes=read(fileno(stdin),input,256);
 		} while (bytes<0);
@@ -70,9 +71,25 @@ void ReadInput(S_SEARCHINFO *info) {
 
 		if (strlen(input) > 0) {
 			if (!strncmp(input, "quit", 4))    {
-			  info->quit = TRUE;
+			  info->quit = true;
 			}
 		}
 		return;
     }
 }
+
+#ifdef NO_PREFETCH
+void prefetch(void*) { };
+#else
+
+void prefetch(void* addr){
+    # if defined(__INTEL_COMPILER)
+    __asm__(**);
+    #endif
+    #if defined(__INTEL_COMPILER) || defined(__MSC_VER)
+    __mm_prefetch((char*)addr, _MM_HINT_TO);
+    #else
+    __builtin_prefetch(addr);
+    #endif
+}
+#endif
