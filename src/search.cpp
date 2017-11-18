@@ -220,7 +220,7 @@ static int AlphaBeta(int alpha, int beta, int depth, Position& pos, S_SEARCHINFO
 	int BestMove = NOMOVE;
 	
 	int BestScore = -INFINITE;
-	
+
 	Score = -INFINITE;
 	
 	if( PvMove != NOMOVE) {

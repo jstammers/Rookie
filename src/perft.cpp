@@ -6,10 +6,11 @@
 #include <string>
 #include <iostream>
 
+
 class Position;
 long leafNodes;
-void Perft(int depth, Position& pos){
-    assert(pos.CheckBoard());
+void Perft(int depth, Position& pos)
+   { assert(pos.CheckBoard());
 
     if (depth == 0){
         leafNodes++;

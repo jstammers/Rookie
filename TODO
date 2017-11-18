@@ -27,8 +27,18 @@
         [ ] Represents each square on the board
         [ ] File 
         [ ] Rank
+    [ ] Move class
+        [ ] Include S_MOVE
+        [ ] Include I/O representation
+        [ ] Include undo
+        [ ] Board.makemove/takemove should operate on this
     [ ] Hashtable
         [ ] More efficient storage of a move - 32bit to 16bit?
     [ ] Move generation
     [ ] Evaluation
-    [ ]
+    [ ] Unittesting
+        [ ] Move all perft and debug stuff to proper unit tests
+        [ ] Test move generation
+        [ ] Test board functions
+        [ ] Test search functions
+        [ ] Test UCI protocol

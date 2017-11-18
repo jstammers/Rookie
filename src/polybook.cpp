@@ -27,7 +27,7 @@ void InitPolyBook(){
     //TODO change to argument or uci option
     FILE *pFile = fopen("performance.bin","rb"); 
     if (pFile == NULL){
-        cout << "Book file not read\n";
+        //cout << "Book file not read\n";
     }
     else{
         fseek(pFile,0,SEEK_END);

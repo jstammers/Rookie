@@ -7,7 +7,7 @@
 #include <iostream>
 
 #define NO_PREFETCH false
-//#define DEBUG
+#define DEBUG
 #ifndef DEBUG
 #define assert(EXPRESSION) ((void)0)
 #else
@@ -59,6 +59,7 @@ typedef uint64_t Key;
 typedef uint64_t BitBoard;
 
 enum Move : int{ MOVE_NONE, MOVE_NULL = 65};
+
 enum {UCIMODE, XBOARDMODE, CONSOLEMODE};
 //Enumerate peices 
 enum Piece {EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };

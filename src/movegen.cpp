@@ -79,6 +79,7 @@ static void AddQuietMove(const Position& pos, int move, S_MOVELIST *list){
         list->moves[list->count].score = pos.get_searchHistory(pos.piece_on(FROMSQ(move)),TOSQ(move));
     }
     list->count++;
+    
 }
 
 static void AddCaptureMove(const Position pos, int move, S_MOVELIST *list){
@@ -167,7 +168,7 @@ void AddBlackPawnMove(const Position pos, const int from, const int to, S_MOVELI
  
 void GenerateAllMoves(const Position& pos, S_MOVELIST *list){
     //assert(pos.CheckBoard());
-
+    
     list->count = 0;
 
     Piece pce = EMPTY;
@@ -179,7 +180,7 @@ void GenerateAllMoves(const Position& pos, S_MOVELIST *list){
         for (pceNum = 0; pceNum < pos.piece_number(wP); ++pceNum){
             sq = pos.get_pos_of(wP,pceNum);
             assert(SqOnBoard(sq));
-            if(pos.piece_on((Square)(sq+10)) == EMPTY){
+            if(!SQOFFBOARD(sq+10) && pos.piece_on((Square)(sq+10)) == EMPTY){
                 AddWhitePawnMove(pos,sq,(Square)(sq+10),list);
                 if (RanksBrd[sq] == RANK_2 && pos.piece_on((Square)(sq+20)) == EMPTY){
                     AddQuietMove(pos,MOVE(sq,(Square)(sq+20),EMPTY,EMPTY,MFLAGPS),list);
@@ -222,7 +223,7 @@ void GenerateAllMoves(const Position& pos, S_MOVELIST *list){
         for (pceNum = 0; pceNum < pos.piece_number(bP); ++pceNum){
             sq = pos.get_pos_of(bP,pceNum);
             assert(SqOnBoard(sq));
-            if(pos.piece_on((Square)(sq-10)) == EMPTY){
+            if(!SQOFFBOARD(sq-10) && pos.piece_on((Square)(sq-10)) == EMPTY){
                 AddBlackPawnMove(pos,sq,sq-10,list);
                 if (RanksBrd[sq] == RANK_7 && pos.piece_on((Square)(sq-20)) == EMPTY){
                     AddQuietMove(pos,MOVE(sq,sq-20,EMPTY,EMPTY,MFLAGPS),list);

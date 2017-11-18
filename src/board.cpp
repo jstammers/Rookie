@@ -482,7 +482,7 @@ bool Position::MakeMove(int move){
     if (PieceKing[pieces[to]]){
         KingSq[t_side]=(Square)to;
     }
-    side= (Colour)(side^1);
+    side = (Colour)(side^1);
     HASH_SIDE();
     assert(CheckBoard());
     if (SqAttacked((Square)KingSq[t_side],side)){

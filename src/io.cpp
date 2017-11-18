@@ -3,7 +3,7 @@
 using namespace std;
 
 string PrSq(const int sq){
-
+    
     int file = FilesBrd[sq];
     int rank = RanksBrd[sq];
     string sqStr = to_string('a'+file) + to_string('1'+ rank);
