@@ -1,9 +1,10 @@
 #include "stdio.h"
 #include "defs.h"
 #include "board.h"
+#include "bitboard.h"
 
-class Postion;
-
+class Position;
+//class BitBoard;
 #define ENDGAME_MAT (1 * PieceVal[wR] + 2 * PieceVal[wN] + 2 * PieceVal[wP])
 
 const int PawnTable[64] = {

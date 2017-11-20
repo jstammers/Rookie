@@ -10,7 +10,7 @@
 #include "evaluate.h"
 
 int SqOnBoard(const int sq){
-    return (FilesBrd[sq] == OFFBOARD || RanksBrd[sq] == OFFBOARD)  ? 0 : 1;
+    return (sq >= A1 && sq <= H8)  ? 1 : 0;
 }
 
 int SideValid(const int side){

@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "(gdb) Launch Test",
             "type": "cppdbg",
@@ -24,7 +25,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/build/Rookie++",
+            "program": "${workspaceRoot}/build/src/Rookie++",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",

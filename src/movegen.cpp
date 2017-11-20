@@ -2,7 +2,7 @@
 #include "movegen.h"
 
 #define MOVE(f,t,ca,pro,fl) ( (f) | ((t) << 7) | ( (ca) << 14 ) | ( (pro) << 20 ) | (fl))
-#define SQOFFBOARD(sq) (FilesBrd[(sq)]==OFFBOARD)
+#define SQOFFBOARD(sq) (sq > 63 || sq < 0)
 
 const int LoopSlidePce[8] = {
  wB, wR, wQ, 0, bB, bR, bQ, 0
@@ -37,7 +37,47 @@ int NumDir[13] = {
 
 const int VictimScore[13] = {0, 100, 200, 300, 400, 500, 600,100, 200, 300, 400, 500, 600 };
 static int MvvLvaScores[13][13];
+/*
+namespace {
+    template<CastlePerm cp, bool checks>
+    S_Move* generate_castling(const Position& pos, S_Move* moveList, Colour side)
+    {}
 
+    template<PromType Type, Square sq>
+    S_MOVE* generate_promotions(S_MOVE* moveList, Square to, Square ksq)
+    {}
+
+    template<Colour side, PromType Type>
+    S_MOVE* generate_pawn_moves(const Position& pos, S_MOVE* moveList, BitBoard target)
+    {}
+
+    template<PieceType pce, bool checks>
+    S_MOVE* generate_moves(const Position& pos, S_MOVE* moveList, Colour side, BitBoard target)
+    {}
+
+    template<Colour side, PromType Type>
+    S_MOVE* generate_all(const Position& pos, S_MOVE* moveList, Colour side)
+    {
+        const bool Checks = Type == QUIET_CHECKS;
+
+        moveList = generate_pawn_moves<side,Type>(pos,moveList,target);
+        moveList = generate_moves<KNIGHT, Checks>(pos,moveList,side,target);
+        moveList = generate_moves<BISHOP, Checks>(pos,moveList,side,target);
+        moveList = generate_moves<ROOK, Checks>(pos,moveList,side,target);
+        moveList = generate_moves<QUEEN, Checks>(pos,moveList,side,target);
+        
+        if (Type != QUIET_CHECKS)
+        {
+            Square ksq = pos.square<KING>(side);
+            BitBoard b = pos.attacks_from<KING>(ksq) & target;
+            while (b)
+                *moveList++ = ma
+        }        
+
+    }
+    
+}
+*/
 void InitMvvLva(){
     int attacker;
     int victim;
@@ -180,25 +220,25 @@ void GenerateAllMoves(const Position& pos, S_MOVELIST *list){
         for (pceNum = 0; pceNum < pos.piece_number(wP); ++pceNum){
             sq = pos.get_pos_of(wP,pceNum);
             assert(SqOnBoard(sq));
-            if(!SQOFFBOARD(sq+10) && pos.piece_on((Square)(sq+10)) == EMPTY){
-                AddWhitePawnMove(pos,sq,(Square)(sq+10),list);
-                if (RanksBrd[sq] == RANK_2 && pos.piece_on((Square)(sq+20)) == EMPTY){
-                    AddQuietMove(pos,MOVE(sq,(Square)(sq+20),EMPTY,EMPTY,MFLAGPS),list);
+            if(!SQOFFBOARD(sq+8) && pos.piece_on((Square)(sq+8)) == EMPTY){
+                AddWhitePawnMove(pos,sq,(Square)(sq+8),list);
+                if (RanksBrd[sq] == RANK_2 && pos.piece_on((Square)(sq+16)) == EMPTY){
+                    AddQuietMove(pos,MOVE(sq,(Square)(sq+16),EMPTY,EMPTY,MFLAGPS),list);
                 }
+            }
+            if (!SQOFFBOARD(sq+7) && PieceCol[pos.piece_on((Square)(sq+7))] == BLACK){
+                AddWhitePawnCapMove(pos,sq,sq+7,pos.piece_on((Square)(sq+7)),list);
             }
             if (!SQOFFBOARD(sq+9) && PieceCol[pos.piece_on((Square)(sq+9))] == BLACK){
                 AddWhitePawnCapMove(pos,sq,sq+9,pos.piece_on((Square)(sq+9)),list);
-            }
-            if (!SQOFFBOARD(sq+11) && PieceCol[pos.piece_on((Square)(sq+11))] == BLACK){
-                AddWhitePawnCapMove(pos,sq,sq+11,pos.piece_on((Square)(sq+11)),list);
             }
             if (pos.get_enPas() != NO_SQ){
 
             if (sq+9 == pos.get_enPas()){
                 AddEnPassantMove(pos,MOVE(sq,sq+9,EMPTY,EMPTY,MFLAGEP),list);
             }
-            if (sq+11 == pos.get_enPas()){
-                AddEnPassantMove(pos,MOVE(sq,sq+11,EMPTY,EMPTY,MFLAGEP),list);
+            if (sq+7 == pos.get_enPas()){
+                AddEnPassantMove(pos,MOVE(sq,sq+7,EMPTY,EMPTY,MFLAGEP),list);
             }
             }
         }
@@ -223,24 +263,24 @@ void GenerateAllMoves(const Position& pos, S_MOVELIST *list){
         for (pceNum = 0; pceNum < pos.piece_number(bP); ++pceNum){
             sq = pos.get_pos_of(bP,pceNum);
             assert(SqOnBoard(sq));
-            if(!SQOFFBOARD(sq-10) && pos.piece_on((Square)(sq-10)) == EMPTY){
-                AddBlackPawnMove(pos,sq,sq-10,list);
-                if (RanksBrd[sq] == RANK_7 && pos.piece_on((Square)(sq-20)) == EMPTY){
-                    AddQuietMove(pos,MOVE(sq,sq-20,EMPTY,EMPTY,MFLAGPS),list);
+            if(!SQOFFBOARD(sq-8) && pos.piece_on((Square)(sq-8)) == EMPTY){
+                AddBlackPawnMove(pos,sq,sq-8,list);
+                if (RanksBrd[sq] == RANK_7 && pos.piece_on((Square)(sq-16)) == EMPTY){
+                    AddQuietMove(pos,MOVE(sq,sq-16,EMPTY,EMPTY,MFLAGPS),list);
                 }
             }
             if (!SQOFFBOARD(sq-9) && PieceCol[pos.piece_on((Square)(sq-9))] == WHITE){
                 AddBlackPawnCapMove(pos,sq,sq-9,pos.piece_on((Square)(sq-9)),list);
             }
-            if (!SQOFFBOARD(sq-11) && PieceCol[pos.piece_on((Square)(sq-11))] == WHITE){
-                AddBlackPawnCapMove(pos,sq,sq-11,pos.piece_on((Square)(sq-11)),list);
+            if (!SQOFFBOARD(sq-7) && PieceCol[pos.piece_on((Square)(sq-7))] == WHITE){
+                AddBlackPawnCapMove(pos,sq,sq-7,pos.piece_on((Square)(sq-7)),list);
             }
             if (pos.get_enPas() != NO_SQ){
             if (sq-9 == pos.get_enPas()){
                 AddEnPassantMove(pos,MOVE(sq,sq-9,EMPTY,EMPTY,MFLAGEP),list);
             }
             if (sq-11 == pos.get_enPas()){
-                AddEnPassantMove(pos,MOVE(sq,sq-11,EMPTY,EMPTY,MFLAGEP),list);
+                AddEnPassantMove(pos,MOVE(sq,sq-7,EMPTY,EMPTY,MFLAGEP),list);
             }
             }
         }
@@ -336,15 +376,15 @@ void GenerateAllCaps(const Position& pos, S_MOVELIST *list){
             if (!SQOFFBOARD(sq+9) && PieceCol[pos.piece_on((Square)(sq+9))] == BLACK){
                 AddWhitePawnCapMove(pos,sq,sq+9,pos.piece_on((Square)(sq+9)),list);
             }
-            if (!SQOFFBOARD(sq+11) && PieceCol[pos.piece_on((Square)(sq+11))] == BLACK){
-                AddWhitePawnCapMove(pos,sq,sq+11,pos.piece_on((Square)(sq+11)),list);
+            if (!SQOFFBOARD(sq+7) && PieceCol[pos.piece_on((Square)(sq+7))] == BLACK){
+                AddWhitePawnCapMove(pos,sq,sq+7,pos.piece_on((Square)(sq+7)),list);
             }
             if (pos.get_enPas() != NO_SQ){
                 if (sq+9 == pos.get_enPas() && !SQOFFBOARD(sq+9)){
                     AddEnPassantMove(pos,MOVE(sq,sq+9,EMPTY,EMPTY,MFLAGEP),list);
                 }
-                if (sq+11 == pos.get_enPas() && !SQOFFBOARD(sq+11)){
-                    AddEnPassantMove(pos,MOVE(sq,sq+11,EMPTY,EMPTY,MFLAGEP),list);
+                if (sq+7 == pos.get_enPas() && !SQOFFBOARD(sq+7)){
+                    AddEnPassantMove(pos,MOVE(sq,sq+7,EMPTY,EMPTY,MFLAGEP),list);
                 }
             }
         }
@@ -356,15 +396,15 @@ void GenerateAllCaps(const Position& pos, S_MOVELIST *list){
             if (!SQOFFBOARD(sq-9) && PieceCol[pos.piece_on((Square)(sq-9))] == WHITE){
                 AddBlackPawnCapMove(pos,sq,sq-9,pos.piece_on((Square)(sq-9)),list);
             }
-            if (!SQOFFBOARD(sq-11) && PieceCol[pos.piece_on((Square)(sq-11))] == WHITE){
-                AddBlackPawnCapMove(pos,sq,sq-11,pos.piece_on((Square)(sq-11)),list);
+            if (!SQOFFBOARD(sq-7) && PieceCol[pos.piece_on((Square)(sq-7))] == WHITE){
+                AddBlackPawnCapMove(pos,sq,sq-7,pos.piece_on((Square)(sq-7)),list);
             }
             if (pos.get_enPas() != NO_SQ){
                 if (sq-9 == pos.get_enPas() && !SQOFFBOARD(sq-9)){
                     AddEnPassantMove(pos,MOVE(sq,sq-9,EMPTY,EMPTY,MFLAGEP),list);
                 }
-                if (sq-11 == pos.get_enPas() && !SQOFFBOARD(sq-11)){
-                 AddEnPassantMove(pos,MOVE(sq,sq-11,EMPTY,EMPTY,MFLAGEP),list);
+                if (sq-7== pos.get_enPas() && !SQOFFBOARD(sq-7)){
+                 AddEnPassantMove(pos,MOVE(sq,sq-7,EMPTY,EMPTY,MFLAGEP),list);
                 }
             }
         }

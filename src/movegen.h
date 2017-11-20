@@ -6,9 +6,17 @@
 #include "board.h"
 #include "attack.h"
 
-//class Position;
+class Position;
 extern void GenerateAllMoves(const Position& pos, S_MOVELIST *list);
 extern void GenerateAllCaps(const Position& pos, S_MOVELIST *list);
 extern bool MoveExists(Position& pos, const int move); 
 
+enum GenType {
+    CAPTURES,
+    QUIETS,
+    QUIET_CHECKS,
+    EVASIONS,
+    NON_EVASIONS,
+    LEGAL
+  };
 #endif // ! MOVEGEN_H

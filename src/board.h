@@ -20,7 +20,7 @@ using namespace std;
 //extern void UpdateListsMaterial(S_BOARD *pos); 
 //extern int CheckBoard(const S_BOARD *pos);
 //extern void MirrorBoard(S_BOARD *pos);
-
+//class BitBoard;
 namespace board {
 
     const string PceChar = ".PNBRQKpnbrqk";
@@ -45,11 +45,19 @@ class Position
         void PrintBoard();
         void MirrorBoard();
         uint64_t GeneratePosKey() const;
+        
+        // Attacks to/from a given square
+        BitBoard attackers_to(Square s) const;
+        BitBoard attackers_to(Square s, BitBoard occupied) const;
+        BitBoard attacks_from(PieceType pt, Square s) const;
+        template<PieceType> BitBoard attacks_from(Square s) const;
+        template<PieceType> BitBoard attacks_from(Square s, Colour c) const;
+        BitBoard slider_blockers(BitBoard sliders, Square s, BitBoard& pinners) const;
 
         Piece piece_on(Square s) const;
         int piece_number(Piece p) const;
         int get_score(Colour c) const;
-        uint64_t get_pawns(Colour c) const;
+        BitBoard get_pawns(Colour c) const;
         Square get_KingSq(Colour c) const;
         Square get_pos_of(Piece p, int pNum) const;
         uint64_t Key();
@@ -94,8 +102,9 @@ class Position
         void shift_SearchKillers(int move);
 
     private:
-        Piece pieces[BRD_SQ_NO];
-        uint64_t pawns[3];
+        //Piece pieces[BRD_SQ_NO];
+        //uint64_t pawns[3];
+        BitBoard pieceBB[13];
         Square KingSq[2];
         Colour side;
         Square enPas;
@@ -118,21 +127,37 @@ class Position
         int searchKillers[2][MAXDEPTH];
     
     };
+/*
+    inline Square template<PieceType T> square(Colour side)
+    {
 
+    }
+
+    inline BitBoard template<PieceType T> attacks_from(Square sq)
+    {
+
+    }
+    */
     inline Piece Position::piece_on(Square s) const{
-        return pieces[s];
+        for (const auto p: Pieces)
+        {
+            if (pieceBB[p].GetBit(s)) return p;
+        }
+        return EMPTY;
     }
 
     inline int Position::piece_number(Piece p) const{
-        return pceNum[p];
+        return pieceBB[p].CountBits();
     }
 
     inline int Position::get_score(Colour c) const{
         return material[c];
     }
 
-    inline uint64_t Position::get_pawns(Colour c) const{
-        return pawns[c];
+    inline BitBoard Position::get_pawns(Colour c) const{
+        if (c == WHITE) return pieceBB[wP];
+        else if (c == BLACK) return pieceBB[wP];
+        else return (pieceBB[wP] | pieceBB[bP]);
     }
 
     inline Square Position::get_KingSq(Colour c) const{
@@ -218,8 +243,8 @@ class Position
 
     inline void Position::ClearPiece(const Square sq){
         assert(SqOnBoard(sq));
-        int pce = (int)pieces[sq];
-    
+        Piece pce = piece_on(sq);
+        if (pce == EMPTY) return;
         assert(PieceValid(pce));
     
         int col = PieceCol[pce];
@@ -228,7 +253,7 @@ class Position
     
         HASH_PCE((Piece)pce,sq);
     
-        pieces[sq] = EMPTY;
+        pieceBB[pce].ClearBit(sq);
         material[col]-= PieceVal[pce];
     
         if (PieceBig[pce]){
@@ -239,11 +264,7 @@ class Position
             else{
                 minPce[col]--;
             }
-        } else {
-            CLRBIT(pawns[col],SQ64(sq));
-            CLRBIT(pawns[BOTH],SQ64(sq)); 
-        }
-    
+        } 
         for (index=0; index < pceNum[pce];++index){
             if (pList[pce][index] == sq){
                 t_pceNum = index;
@@ -266,7 +287,7 @@ class Position
 
         HASH_PCE(pce,sq);
 
-        pieces[sq] = pce;
+        pieceBB[pce].SetBit(sq);
         material[col]+= PieceVal[pce];
 
         if (PieceBig[pce]){
@@ -277,9 +298,6 @@ class Position
             else{
                 minPce[col]++;
             }
-        } else {
-            SETBIT(pawns[col],SQ64(sq));
-            SETBIT(pawns[BOTH],SQ64(sq)); 
         }
         pList[pce][pceNum[pce]++] = sq;
     }
@@ -295,7 +313,7 @@ class Position
     assert(SqOnBoard(to));
 
     int index = 0;
-    Piece pce = pieces[from];
+    Piece pce = piece_on(from);
     int col = PieceCol[pce];
 
     #ifdef DEBUG
@@ -303,17 +321,10 @@ class Position
     #endif
 
     HASH_PCE(pce,from);
-    pieces[from] = EMPTY;
+    pieceBB[pce].ClearBit(from);
 
     HASH_PCE(pce,to);
-    pieces[to] = pce;
-
-    if (!PieceBig[pce]){
-        CLRBIT(pawns[col],SQ64(from));
-        CLRBIT(pawns[BOTH],SQ64(from));
-        SETBIT(pawns[col],SQ64(to));
-        SETBIT(pawns[BOTH],SQ64(to));
-    }
+    pieceBB[pce].SetBit(to);
     
     for (index = 0; index< pceNum[pce]; ++index){
         if (pList[pce][index] == from){

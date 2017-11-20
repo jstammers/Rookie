@@ -8,7 +8,7 @@ using namespace board;
 
 namespace board {
 }
-
+/*
 const int CastlePerm[120] = {
     15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
     15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
@@ -28,6 +28,23 @@ const int KnDir[8] = { -8, -19,	-21, -12, 8, 19, 21, 12 };
 const int RkDir[4] = { -1, -10,	1, 10 };
 const int BiDir[4] = { -9, -11, 11, 9 };
 const int KiDir[8] = { -1, -10,	1, 10, -9, -11, 11, 9 };
+*/
+const int CastlePerm[64] = 
+ {
+    13, 15, 15, 15, 12, 15, 15, 14, 
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+     7, 15, 15, 15,  3, 15, 15, 11
+};
+
+const int KnDir[8] = { -6, -15,	-17, -10, 6, 15, 17, 10 };
+const int RkDir[4] = { -1, -8,	1, 8 };
+const int BiDir[4] = { -7, -9, 7, 9 };
+const int KiDir[8] = { -1, -8,	1, 8, -9, -7, 7, 9 };
 
 Position::Position(){
     ResetBoard();
@@ -46,24 +63,18 @@ bool Position::CheckBoard(){
     int sq64,t_pce_num,sq120,pcount;
     int t_piece;
     int colour;
-    uint64_t t_pawns[3] = {0ULL,0ULL,0ULL};
-
-    t_pawns[WHITE] = pawns[WHITE];
-    t_pawns[BLACK] = pawns[BLACK];
-    t_pawns[BOTH] =  pawns[BOTH];
 
     //check piece lists
     for (t_piece = wP; t_piece <= bK; ++t_piece){
         for (t_pce_num = 0; t_pce_num < pceNum[t_piece]; ++t_pce_num){
             sq120 = pList[t_piece][t_pce_num];
-            assert(pieces[sq120]==t_piece);
+            assert(piece_on((Square)sq120)==t_piece);
         }
     }
 
     //check piece count and other counters
     for (sq64 = 0; sq64 < 64; ++sq64){
-        sq120 = SQ120(sq64);
-        t_piece = pieces[sq120];
+        t_piece = piece_on((Square)sq64);
         t_pceNum[t_piece]++;
         colour = PieceCol[int(t_piece)];
         if(PieceBig[t_piece] == true) t_bigPce[colour]++;
@@ -78,25 +89,9 @@ bool Position::CheckBoard(){
     }
 
     //check bitboards
-    pcount = CNT(t_pawns[WHITE]);
-    assert(pcount == pceNum[wP]);
-    pcount = CNT(t_pawns[BLACK]);
-    assert(pcount == pceNum[bP]);
-    pcount = CNT(t_pawns[BOTH]);
-    assert(pcount == (pceNum[wP] + pceNum[bP]));
-
-    //check bitboard squares
-    while (t_pawns[WHITE]){
-        sq64 = POP(&t_pawns[WHITE]);
-        assert(pieces[SQ120(sq64)]==wP);
-    }
-    while (t_pawns[BLACK]){
-        sq64 = POP(&t_pawns[BLACK]);
-        assert(pieces[SQ120(sq64)]==bP);
-    }
-    while (t_pawns[BOTH]){
-        sq64 = POP(&t_pawns[BOTH]);
-        assert((pieces[SQ120(sq64)]==wP) || (pieces[SQ120(sq64)]==bP));
+    for (auto p : Pieces)
+    {
+        assert(pieceBB[p].CountBits() == pceNum[p]);
     }
 
     assert(t_material[WHITE] == material[WHITE] && t_material[BLACK] == material[BLACK]);
@@ -109,8 +104,8 @@ bool Position::CheckBoard(){
    // assert(GeneratePosKey() == posKey);
     assert(enPas==NO_SQ || (RanksBrd[enPas]==RANK_6 && side==WHITE) || (RanksBrd[enPas] == RANK_3 && side==BLACK));
 
-    //assert(pieces[KingSq[WHITE]] == wK);
-    //assert(pieces[KingSq[BLACK] == bK]);
+    assert(piece_on(KingSq[WHITE]) == wK);
+    assert(piece_on(KingSq[BLACK]) == bK);
 
     return true;
 }
@@ -120,7 +115,7 @@ void Position::UpdateListsMaterial(){
     int index,colour;
     for (index=0; index< BRD_SQ_NO; ++index){
         sq = Square(index);
-        piece = pieces[index];
+        piece = piece_on(sq);
         if (piece!=EMPTY){
             colour = PieceCol[piece];
             if (PieceBig[piece] == true) bigPce[colour]++;
@@ -134,14 +129,7 @@ void Position::UpdateListsMaterial(){
 
             if (piece == wK) KingSq[WHITE] = sq;
             if (piece == bK) KingSq[BLACK] = sq; 
-
-            if (piece == wP){
-                SETBIT(pawns[WHITE],SQ64(sq));
-                SETBIT(pawns[BOTH],SQ64(sq));
-            }
-            else if (piece == bP){                SETBIT(pawns[BLACK],SQ64(sq));
-                SETBIT(pawns[BOTH],SQ64(sq));
-            }
+            pieceBB[piece].SetBit(sq);
         }
     }
 }
@@ -201,9 +189,9 @@ bool Position::ParseFen(string fen){
 
        for (i=0; i< count; i++){
            sq64 = rank * 8 + file;
-           sq120 = SQ120(sq64);
+        
            if (piece != EMPTY){
-                pieces[sq120] = piece;
+                pieceBB[piece].SetBit((Square)sq64);
            }
            file++;
        }
@@ -251,22 +239,15 @@ void Position::ResetBoard(){
     int index = 0;
     int piece = 0;
 
-    for (index = 0; index < BRD_SQ_NO; ++index){
-        pieces[index] = EMPTY;
+    for (auto p : pieceBB)
+    {
+        p.ClearAll();
     }
-
-    for (index = 0; index < 64; ++index){
-        pieces[SQ120(index)] = EMPTY;
-    }
-
     for (index = 0 ; index < 2; ++index){
         bigPce[index] = 0;
         majPce[index] = 0;
         material[index] = 0;
         minPce[index] = 0;
-    }
-    for (index = 0; index < 3; ++index){
-         pawns[index] = 0ULL;
     }
     for (index = 0; index < 13; ++index){
         pceNum[index] = 0;
@@ -304,7 +285,7 @@ void Position::PrintBoard(){
         std::cout << rank+1 << " ";
         for (file = FILE_A; file <= FILE_H; file++){
             sq = FR2SQ(file,rank);
-            piece = pieces[sq];
+            piece = piece_on((Square)sq);
             std::cout << PceChar[piece];
         }
         std::cout << "\n";
@@ -342,18 +323,18 @@ void Position::MirrorBoard(){
     if (castlePerm & BQCA) tempCastlePerm |= WQCA;
 
     if (enPas != NO_SQ){
-        tempEnPas = MIRROR64(SQ64(enPas));
+        tempEnPas = MIRROR64(enPas);
     }
 
     for (sq=0; sq<64; sq++){
-        tempPiecesArray[sq] = pieces[SQ120(MIRROR64(sq))];
+        tempPiecesArray[sq] = piece_on(MIRROR64(sq));
     }
 
     ResetBoard();
 
     for (sq = 0; sq < 64; sq++){
         tp = SwapPieces[tempPiecesArray[sq]];
-        pieces[SQ120(sq)] = tp;
+        pieceBB[tp].SetBit((Square)sq);
     }
     side = tempSide;
     castlePerm = tempCastlePerm;
@@ -374,7 +355,7 @@ uint64_t Position::GeneratePosKey()const {
 
     //pieces
     for (sq = 0; sq < BRD_SQ_NO; ++sq){
-        piece = pieces[sq];
+        piece = piece_on((Square)sq);
         if (piece != EMPTY){
             assert(piece>=wP && piece<= bK);
             finalKey ^= PieceKeys[piece][sq];
@@ -405,16 +386,16 @@ bool Position::MakeMove(int move){
     assert(SqOnBoard(from));
     assert(SqOnBoard(to));
     assert(SideValid(t_side));
-    assert(PieceValid(pieces[from]));
+    assert(PieceValid(piece_on(from)));
 
     history[hisPly].posKey = posKey;
 
     if (move & MFLAGEP) {
         if (t_side == WHITE){
-            ClearPiece((Square)(to-10));
+            ClearPiece((Square)(to-8));
         }
         else {
-            ClearPiece((Square)(to+10));
+            ClearPiece((Square)(to+8));
         }
         assert(CheckBoard());
     }
@@ -455,16 +436,16 @@ bool Position::MakeMove(int move){
     hisPly++;
     ply++;
 
-    if(PiecePawn[pieces[from]]){
+    if(piece_on(from) == wP || piece_on(from) == bP){
         fiftyMove=0;
         if (move & MFLAGPS){
             if (t_side == WHITE){
-                enPas=(Square)(from+10);
+                enPas=(Square)(from+8);
                 assert(RanksBrd[enPas] == RANK_3);
             }
             else
             {
-                enPas=(Square)(from-10);
+                enPas=(Square)(from-8);
                 assert(RanksBrd[enPas] == RANK_6);
             }
             HASH_EP();
@@ -479,7 +460,7 @@ bool Position::MakeMove(int move){
         AddPiece((Square)to,(Piece)prPce);
     }
 
-    if (PieceKing[pieces[to]]){
+    if (piece_on(to) == wK || piece_on(to) == bK){
         KingSq[t_side]=(Square)to;
     }
     side = (Colour)(side^1);
@@ -490,6 +471,8 @@ bool Position::MakeMove(int move){
         TakeMove();
         return false;
     }
+    std::cout<<PrMove(move)<<endl;
+    PrintBoard();
     return true;
 }
 
@@ -521,10 +504,10 @@ void Position::TakeMove(){
 
     if (move & MFLAGEP) {
         if (side == WHITE){
-            AddPiece((Square)(to-10),bP);
+            AddPiece((Square)(to-8),bP);
         }
         else {
-            AddPiece((Square)(to+10),wP);
+            AddPiece((Square)(to+8),wP);
         }
     }
     else if (move & MFLAGCA){
@@ -540,7 +523,7 @@ void Position::TakeMove(){
 
     MovePiece((Square)to,(Square)from);
 
-    if (PieceKing[pieces[from]]){
+    if (piece_on((Square)from) == wK || piece_on((Square)from) == bK){
         KingSq[side]=(Square)from;
     }
 
@@ -617,18 +600,19 @@ bool Position::SqAttacked(const Square sq, const int side) const {
     
 	// pawns
 	if(side == WHITE) {
-		if(piece_on((Square)(sq-11)) == wP || piece_on((Square)(sq-9)) == wP) {
+		if(piece_on((Square)(sq-7)) == wP || piece_on((Square)(sq-9)) == wP) {
 			return true;
 		}
 	} else {
-		if(piece_on((Square)(sq+11)) == bP || piece_on((Square)(sq+9)) == bP) {
+		if(piece_on((Square)(sq+7)) == bP || piece_on((Square)(sq+9)) == bP) {
 			return true;
 		}	
 	}
 	// knights
     for (index = 0; index < 8; index++){
+        if (!SqOnBoard(sq+KnDir[index])) continue;
         pce = piece_on((Square)(sq+KnDir[index]));
-        if ( (Square)(sq+KnDir[index])!= OFFBOARD && IsKn(pce) && PieceCol[pce]==side){
+        if (IsKn(pce) && PieceCol[pce]==side){
             return true;
         }
     }
@@ -637,6 +621,7 @@ bool Position::SqAttacked(const Square sq, const int side) const {
     for (index = 0; index < 4; index++){
         dir = RkDir[index];
         t_sq = (SqOnBoard(Square(sq+dir))) ? Square(sq+dir) :OFFBOARD;
+        if (t_sq == OFFBOARD) continue;
         pce = piece_on(t_sq);
         while(t_sq != OFFBOARD){
             if (pce != EMPTY){
@@ -646,6 +631,7 @@ bool Position::SqAttacked(const Square sq, const int side) const {
                 break;
             }
             t_sq = (SqOnBoard(Square(t_sq+dir))) ? Square(t_sq+dir) : OFFBOARD;
+            if (t_sq == OFFBOARD) continue;
             pce = piece_on((Square)t_sq);
         }
 
@@ -654,6 +640,7 @@ bool Position::SqAttacked(const Square sq, const int side) const {
     for (index = 0; index < 4; index++){
         dir = BiDir[index];
         t_sq = (SqOnBoard(Square(sq+dir))) ? Square(sq+dir) : OFFBOARD;
+        if (t_sq == OFFBOARD) continue;
         pce = piece_on(t_sq);
         while(t_sq != OFFBOARD){
             if (pce != EMPTY){
@@ -663,14 +650,16 @@ bool Position::SqAttacked(const Square sq, const int side) const {
                 break;
             }
             t_sq = (SqOnBoard(Square(t_sq+dir))) ? Square(t_sq+dir) : OFFBOARD;
+            if (t_sq == OFFBOARD) continue;
             pce = piece_on((Square)t_sq);
         }
     }
 
     //kings
     for (index = 0; index < 8; index++){
+        if (!SqOnBoard(sq+KiDir[index])) continue;
         pce = piece_on((Square)(sq+KiDir[index]));
-        if ((Square)(sq+KiDir[index])!= OFFBOARD && IsKi(pce) && PieceCol[pce]==side){
+        if (IsKi(pce) && PieceCol[pce]==side){
             return true;
         }
     }

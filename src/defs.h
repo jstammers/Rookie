@@ -14,31 +14,45 @@
 #include <cassert>
 #endif
 
+#if defined(USE_PEXT)
+#include <immintrin.h> // Header for _pext_u64() intrinsic
+#define pext(b, m) _pext_u64(b, m)
+#else
+#define pext(b, m) 0
+#endif
+
+#ifdef USE_PEXT
+const bool HasPext = true;
+#else
+const bool HasPext = false;
+#endif
+
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" 
 /*Macros*/ 
 #define MAX_HASH 1024
 #define MAXGAMEMOVES 2048
 #define MAXPOSITIONMOVE 256
-#define FR2SQ(f,r) (Square)( (21 + (f) ) + ((r) * 10))
-#define SQ64(sq) (Sq120ToSq64[(sq)])
-#define SQ120(sq64) (Sq64ToSq120[(sq64)])
-#define BRD_SQ_NO 120
+#define FR2SQ(f,r) (Square)( (0 + (f) ) + ((r) * 8))
+/*#define SQ64(sq) (Sq120ToSq64[(sq)])
+#define SQ120(sq64) (Sq64ToSq120[(sq64)])*/
+#define BRD_SQ_NO 64
 #define NOMOVE 0 
 #define MAXDEPTH 64
 #define INFINITE 30000
 #define ISMATE (INFINITE - MAXDEPTH)
 
-#define POP(b) PopBit(b)
+/*#define POP(b) PopBit(b)
 #define CNT(b) CountBits(b)
 #define SETBIT(bb,sq) ((bb) |= SetMask[(sq)])
-#define CLRBIT(bb,sq) ((bb) &= ClearMask[(sq)])
-#define NAME "Rookie 1.0"
+#define CLRBIT(bb,sq) ((bb) &= ClearMask[(sq)])*/
+#define NAME "Rookie 1.2"
 #define IsBQ(p) (PieceBishopQueen[(p)])
 #define IsRQ(p) (PieceRookQueen[(p)])
 #define IsKn(p) (PieceKnight[(p)])
 #define IsKi(p) (PieceKing[(p)])
 #define MIRROR64(sq) (Square)(Mirror64[(sq)])
 
+//TODO Put these into a move class
 #define FROMSQ(m) (Square)((m) & 0x7F)
 #define TOSQ(m) (Square)(((m) >> 7) & 0x7F)
 #define CAPTURED(m) (Piece)(((m) >> 14) & 0xF)
@@ -56,29 +70,39 @@ const int MAX_MOVES = 256;
 const int MAX_PLY   = 128;
 
 typedef uint64_t Key;
-typedef uint64_t BitBoard;
-
+enum PieceType {PAWN,KNIGHT,BISHOP,ROOK,QUEEN,KING};
 enum Move : int{ MOVE_NONE, MOVE_NULL = 65};
 
 enum {UCIMODE, XBOARDMODE, CONSOLEMODE};
 //Enumerate peices 
 enum Piece {EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };
+//const Piece Pieces[13];
+const Piece Pieces[] = {EMPTY,wP,wN,wB,wR,wQ,wK,bP,bN,bB,bR,bQ,bK};
+enum Rank :int {RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE};
 
-enum Ranks {RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE};
-
-enum Files {FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE};
+enum File : int {FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE};
 
 enum Colour {WHITE, BLACK, BOTH};
 
 enum Square {
-     A1 = 21, B1, C1, D1, E1, F1, G1, H1,
-     A2 = 31, B2, C2, D2, E2, F2, G2, H2,
-     A3 = 41, B3, C3, D3, E3, F3, G3, H3,
-     A4 = 51, B4, C4, D4, E4, F4, G4, H4,
-     A5 = 61, B5, C5, D5, E5, F5, G5, H5,
-     A6 = 71, B6, C6, D6, E6, F6, G6, H6,
-     A7 = 81, B7, C7, D7, E7, F7, G7, H7,
-     A8 = 91, B8, C8, D8, E8, F8, G8, H8,OFFBOARD,NO_SQ
+     A1, B1, C1, D1, E1, F1, G1, H1,
+     A2, B2, C2, D2, E2, F2, G2, H2,
+     A3, B3, C3, D3, E3, F3, G3, H3,
+     A4, B4, C4, D4, E4, F4, G4, H4,
+     A5, B5, C5, D5, E5, F5, G5, H5,
+     A6, B6, C6, D6, E6, F6, G6, H6,
+     A7, B7, C7, D7, E7, F7, G7, H7,
+     A8, B8, C8, D8, E8, F8, G8, H8,OFFBOARD,NO_SQ,
+
+     NORTH = 8,
+     EAST = 1,
+     SOUTH = -NORTH,
+     WEST = -EAST,
+
+     NORTH_EAST = NORTH+EAST,
+     SOUTH_EAST = SOUTH+EAST,
+     NORTH_WEST = NORTH+WEST,
+     SOUTH_WEST = SOUTH+WEST
  };
  enum Bound {
     BOUND_NONE,
@@ -125,6 +149,37 @@ typedef struct {
     int score;
 } S_MOVE;
 
+#define ENABLE_BASE_OPERATORS_ON(T)                             \
+inline T operator+(T d1, T d2) { return T(int(d1) + int(d2)); } \
+inline T operator-(T d1, T d2) { return T(int(d1) - int(d2)); } \
+inline T operator-(T d) { return T(-int(d)); }                  \
+inline T& operator+=(T& d1, T d2) { return d1 = d1 + d2; }      \
+inline T& operator-=(T& d1, T d2) { return d1 = d1 - d2; }      \
+
+#define ENABLE_FULL_OPERATORS_ON(T)                             \
+ENABLE_BASE_OPERATORS_ON(T)                                     \
+inline T operator*(int i, T d) { return T(i * int(d)); }        \
+inline T operator*(T d, int i) { return T(int(d) * i); }        \
+inline T& operator++(T& d) { return d = T(int(d) + 1); }        \
+inline T& operator--(T& d) { return d = T(int(d) - 1); }        \
+inline T operator/(T d, int i) { return T(int(d) / i); }        \
+inline int operator/(T d1, T d2) { return int(d1) / int(d2); }  \
+inline T& operator*=(T& d, int i) { return d = T(int(d) * i); } \
+inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
+
+ENABLE_FULL_OPERATORS_ON(Value)
+ENABLE_FULL_OPERATORS_ON(PieceType)
+ENABLE_FULL_OPERATORS_ON(Piece)
+ENABLE_FULL_OPERATORS_ON(Colour)
+ENABLE_FULL_OPERATORS_ON(Depth)
+ENABLE_FULL_OPERATORS_ON(Square)
+ENABLE_FULL_OPERATORS_ON(File)
+ENABLE_FULL_OPERATORS_ON(Rank)
+
+//ENABLE_BASE_OPERATORS_ON(Score)
+
+#undef ENABLE_FULL_OPERATORS_ON
+#undef ENABLE_BASE_OPERATORS_ON
 //Undo move structure
 typedef struct
 {

@@ -4,11 +4,12 @@
 
 #include "defs.h"
 
+class BitBoard;
 extern int Sq120ToSq64[BRD_SQ_NO];
 extern int Sq64ToSq120[64];
-extern uint64_t SetMask[64];
-extern uint64_t ClearMask[64];
-extern uint64_t PieceKeys[13][120];
+extern BitBoard SetMask[64];
+extern BitBoard ClearMask[64];
+extern uint64_t PieceKeys[13][64];
 extern uint64_t SideKey;
 extern uint64_t CastleKeys[16];
 
@@ -22,12 +23,6 @@ extern int FilesBrd[BRD_SQ_NO];
 extern int RanksBrd[BRD_SQ_NO];
 
 extern const int Mirror64[64];
-extern uint64_t FileBBMask[8];
-extern uint64_t RankBBMask[8];
-
-extern uint64_t BlackPassedMask[64];
-extern uint64_t WhitePassedMask[64];
-extern uint64_t IsolatedMask[64];
 
 extern S_OPTIONS EngineOptions[1];
 #endif //GLOBALS_H

@@ -36,12 +36,12 @@ int EvalPosition(const Position& pos) {
 	for(pceNum = 0; pceNum < pos.piece_number(pce); ++pceNum) {
 		sq = pos.get_pos_of(pce,pceNum);
 		assert(SqOnBoard(sq));
-		score += PawnTable[SQ64(sq)];
+		score += PawnTable[sq];
 
-		if ((IsolatedMask[SQ64(sq)] & pos.get_pawns(WHITE)) == 0){
+		if ((IsolatedMask[sq] & pos.get_pawns(WHITE)) == 0){
 			score += PawnIsolated;
 		}
-		if ((WhitePassedMask[(SQ64(sq))] & pos.get_pawns(BLACK))==0){
+		if ((WhitePassedMask[sq] & pos.get_pawns(BLACK))==0){
 			score += PawnsPassed[RanksBrd[sq]];
 		}
 		
@@ -51,12 +51,12 @@ int EvalPosition(const Position& pos) {
 	for(pceNum = 0; pceNum < pos.piece_number(pce); ++pceNum) {
 		sq = pos.get_pos_of(pce,pceNum);
 		assert(SqOnBoard(sq));
-		score -= PawnTable[MIRROR64(SQ64(sq))];
+		score -= PawnTable[MIRROR64(sq)];
 
-		if ((IsolatedMask[SQ64(sq)] & pos.get_pawns(BLACK)) == 0){
+		if ((IsolatedMask[sq] & pos.get_pawns(BLACK)) == 0){
 			score -= PawnIsolated;
 		}
-		if ((BlackPassedMask[(SQ64(sq))] & pos.get_pawns(WHITE))==0){
+		if ((BlackPassedMask[sq] & pos.get_pawns(WHITE))==0){
 			score -= PawnsPassed[7-RanksBrd[sq]];
 		}
 	}	
@@ -66,38 +66,38 @@ int EvalPosition(const Position& pos) {
 	for(pceNum = 0; pceNum < pos.piece_number(pce); ++pceNum) {
 		sq = pos.get_pos_of(pce,pceNum);
 		assert(SqOnBoard(sq));
-		score += KnightTable[SQ64(sq)];
+		score += KnightTable[sq];
 	}	
 
 	pce = bN;	
 	for(pceNum = 0; pceNum < pos.piece_number(pce); ++pceNum) {
 		sq = pos.get_pos_of(pce,pceNum);
 		assert(SqOnBoard(sq));
-		score -= KnightTable[MIRROR64(SQ64(sq))];
+		score -= KnightTable[MIRROR64(sq)];
 	}			
 	
 	pce = wB;	
 	for(pceNum = 0; pceNum < pos.piece_number(pce); ++pceNum) {
 		sq = pos.get_pos_of(pce,pceNum);
 		assert(SqOnBoard(sq));
-		score += BishopTable[SQ64(sq)];
+		score += BishopTable[sq];
 	}	
 
 	pce = bB;	
 	for(pceNum = 0; pceNum < pos.piece_number(pce); ++pceNum) {
 		sq = pos.get_pos_of(pce,pceNum);
 		assert(SqOnBoard(sq));
-		score -= BishopTable[MIRROR64(SQ64(sq))];
+		score -= BishopTable[MIRROR64(sq)];
 	}	
 
 	pce = wR;	
 	for(pceNum = 0; pceNum < pos.piece_number(pce); ++pceNum) {
 		sq = pos.get_pos_of(pce,pceNum);
 		assert(SqOnBoard(sq));
-		score += RookTable[SQ64(sq)];
-		if(!(pos.get_pawns(BOTH) & FileBBMask[FilesBrd[sq]])) {
+		score += RookTable[sq];
+		if(!(pos.get_pawns(BOTH) & FileBBMask[FilesBrd[sq]]).any()) {
 				score += RookOpenFile;
-		} else if(!(pos.get_pawns(WHITE) & FileBBMask[FilesBrd[sq]])) {
+		} else if(!(pos.get_pawns(WHITE) & FileBBMask[FilesBrd[sq]]).any()) {
 			score += RookSemiOpenFile;
 		}
 	}	
@@ -106,10 +106,10 @@ int EvalPosition(const Position& pos) {
 	for(pceNum = 0; pceNum < pos.piece_number(pce); ++pceNum) {
 		sq = pos.get_pos_of(pce,pceNum);
 		assert(SqOnBoard(sq));
-		score -= RookTable[MIRROR64(SQ64(sq))];
-		if(!(pos.get_pawns(BOTH) & FileBBMask[FilesBrd[sq]])) {
+		score -= RookTable[MIRROR64(sq)];
+		if(!(pos.get_pawns(BOTH) & FileBBMask[FilesBrd[sq]]).any()) {
 			score -= RookOpenFile;
-		} else if(!(pos.get_pawns(BLACK) & FileBBMask[FilesBrd[sq]])) {
+		} else if(!(pos.get_pawns(BLACK) & FileBBMask[FilesBrd[sq]]).any()) {
 			score -= RookSemiOpenFile;
 		}
 	}	
@@ -118,9 +118,9 @@ int EvalPosition(const Position& pos) {
 	for(pceNum = 0; pceNum < pos.piece_number(pce); ++pceNum) {
 		sq = pos.get_pos_of(pce,pceNum);
 		assert(SqOnBoard(sq));
-		if(!(pos.get_pawns(BOTH) & FileBBMask[FilesBrd[sq]])) {
+		if(!(pos.get_pawns(BOTH) & FileBBMask[FilesBrd[sq]]).any()) {
 			score += QueenOpenFile;
-		} else if(!(pos.get_pawns(WHITE) & FileBBMask[FilesBrd[sq]])) {
+		} else if(!(pos.get_pawns(WHITE) & FileBBMask[FilesBrd[sq]]).any()) {
 			score += QueenSemiOpenFile;
 		}
 	}	
@@ -129,9 +129,9 @@ int EvalPosition(const Position& pos) {
 	for(pceNum = 0; pceNum < pos.piece_number(pce); ++pceNum) {
 		sq = pos.get_pos_of(pce,pceNum);
 		assert(SqOnBoard(sq));
-		if(!(pos.get_pawns(BOTH) & FileBBMask[FilesBrd[sq]])) {
+		if(!(pos.get_pawns(BOTH) & FileBBMask[FilesBrd[sq]]).any()) {
 			score -= QueenOpenFile;
-		} else if(!(pos.get_pawns(BLACK) & FileBBMask[FilesBrd[sq]])) {
+		} else if(!(pos.get_pawns(BLACK) & FileBBMask[FilesBrd[sq]]).any()) {
 			score -= QueenSemiOpenFile;
 		}
 	}
@@ -140,18 +140,18 @@ int EvalPosition(const Position& pos) {
 	sq = pos.get_pos_of(pce,0);
 	
 	if((pos.get_score(BLACK) <= ENDGAME_MAT) ) {
-		score += KingE[SQ64(sq)];
+		score += KingE[sq];
 	} else {
-		score += KingO[SQ64(sq)];
+		score += KingO[sq];
 	}
 	
 	pce = bK;
 	sq = pos.get_pos_of(pce,0);
 	
 	if((pos.get_score(WHITE) <= ENDGAME_MAT) ) {
-		score -= KingE[MIRROR64(SQ64(sq))];
+		score -= KingE[MIRROR64(sq)];
 	} else {
-		score -= KingO[MIRROR64(SQ64(sq))];
+		score -= KingO[MIRROR64(sq)];
 	}	
 
 	if (pos.piece_number(wB) >= 2) score += BishopPair;

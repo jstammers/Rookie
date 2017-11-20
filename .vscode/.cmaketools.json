@@ -19,6 +19,89 @@
             "targets": [
               {
                 "artifacts": [
+                  "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build/src/Rookie++"
+                ],
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build/src",
+                "fileGroups": [
+                  {
+                    "compileFlags": "-g  ",
+                    "includePath": [
+                      {
+                        "path": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess"
+                      }
+                    ],
+                    "isGenerated": false,
+                    "language": "CXX",
+                    "sources": [
+                      "Rookie++.cpp"
+                    ]
+                  }
+                ],
+                "fullName": "Rookie++",
+                "linkFlags": "-rdynamic",
+                "linkLanguageFlags": "-g",
+                "linkLibraries": "-Wl,-rpath,/media/Storage/Dropbox/Code/Python/TensorFlow/Chess libRookieLib.a",
+                "linkPath": "-L/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
+                "linkerLanguage": "CXX",
+                "name": "Rookie++",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/src",
+                "type": "EXECUTABLE"
+              },
+              {
+                "artifacts": [
+                  "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build/src/libRookieLib.a"
+                ],
+                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build/src",
+                "fileGroups": [
+                  {
+                    "compileFlags": "-g  ",
+                    "includePath": [
+                      {
+                        "path": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess"
+                      }
+                    ],
+                    "isGenerated": false,
+                    "language": "CXX",
+                    "sources": [
+                      "bitboard.cpp",
+                      "board.cpp",
+                      "movegen.cpp",
+                      "evaluate.cpp",
+                      "validate.cpp",
+                      "search.cpp",
+                      "perft.cpp",
+                      "polybook.cpp",
+                      "polykeys.cpp",
+                      "uci.cpp",
+                      "xboard.cpp",
+                      "init.cpp",
+                      "ttable.cpp",
+                      "data.cpp",
+                      "io.cpp",
+                      "misc.cpp"
+                    ]
+                  },
+                  {
+                    "isGenerated": false,
+                    "sources": [
+                      "defs.h",
+                      "bitboard.h",
+                      "board.h",
+                      "movegen.h",
+                      "evaluate.h",
+                      "polykeys.h",
+                      "interface.h"
+                    ]
+                  }
+                ],
+                "fullName": "libRookieLib.a",
+                "linkerLanguage": "CXX",
+                "name": "RookieLib",
+                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/src",
+                "type": "STATIC_LIBRARY"
+              },
+              {
+                "artifacts": [
                   "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build/test/RookieTest"
                 ],
                 "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build/test",
@@ -48,95 +131,13 @@
                 "name": "RookieTest",
                 "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/test",
                 "type": "EXECUTABLE"
-              },
-              {
-                "artifacts": [
-                  "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build/src/libRookieLib.a"
-                ],
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build/src",
-                "fileGroups": [
-                  {
-                    "isGenerated": false,
-                    "sources": [
-                      "bitboard.h",
-                      "board.h",
-                      "movegen.h",
-                      "evaluate.h",
-                      "polykeys.h",
-                      "interface.h"
-                    ]
-                  },
-                  {
-                    "compileFlags": "-g  ",
-                    "includePath": [
-                      {
-                        "path": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess"
-                      }
-                    ],
-                    "isGenerated": false,
-                    "language": "CXX",
-                    "sources": [
-                      "bitboard.cpp",
-                      "board.cpp",
-                      "movegen.cpp",
-                      "evaluate.cpp",
-                      "validate.cpp",
-                      "search.cpp",
-                      "perft.cpp",
-                      "polybook.cpp",
-                      "polykeys.cpp",
-                      "uci.cpp",
-                      "xboard.cpp",
-                      "init.cpp",
-                      "ttable.cpp",
-                      "data.cpp",
-                      "io.cpp",
-                      "misc.cpp"
-                    ]
-                  }
-                ],
-                "fullName": "libRookieLib.a",
-                "linkerLanguage": "CXX",
-                "name": "RookieLib",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/src",
-                "type": "STATIC_LIBRARY"
-              },
-              {
-                "artifacts": [
-                  "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build/src/Rookie++"
-                ],
-                "buildDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/build/src",
-                "fileGroups": [
-                  {
-                    "compileFlags": "-g  ",
-                    "includePath": [
-                      {
-                        "path": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess"
-                      }
-                    ],
-                    "isGenerated": false,
-                    "language": "CXX",
-                    "sources": [
-                      "Rookie++.cpp"
-                    ]
-                  }
-                ],
-                "fullName": "Rookie++",
-                "linkFlags": "-rdynamic",
-                "linkLanguageFlags": "-g",
-                "linkLibraries": "-Wl,-rpath,/media/Storage/Dropbox/Code/Python/TensorFlow/Chess libRookieLib.a",
-                "linkPath": "-L/media/Storage/Dropbox/Code/Python/TensorFlow/Chess",
-                "linkerLanguage": "CXX",
-                "name": "Rookie++",
-                "sourceDirectory": "/media/Storage/Dropbox/Code/Python/TensorFlow/Chess/src",
-                "type": "EXECUTABLE"
               }
             ]
           }
         ]
       }
     ],
-    "cookie": "0.7473686737199079",
+    "cookie": "0.03548751562722208",
     "inReplyTo": "codemodel",
     "type": "reply"
   }
