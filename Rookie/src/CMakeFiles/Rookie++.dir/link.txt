@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/Rookie++.dir/Rookie++.cpp.o  -o Rookie++  -L/home/jimmy/Dropbox/Code/Python/TensorFlow/Chess -Wl,-rpath,/home/jimmy/Dropbox/Code/Python/TensorFlow/Chess libRookieLib.a 

@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/RookieTest.dir/RookieTest.cpp.o  -o RookieTest -Wl,-rpath,/usr/local/lib ../src/libRookieLib.a /usr/local/lib/libboost_unit_test_framework.so 
